@@ -1,0 +1,22 @@
+<mat-toolbar class="navbar">
+  <span class="brand" routerLink="/cafes">CoffeeHouse Admin</span>
+
+  <div class="nav-links">
+    <button mat-button routerLink="/cafes">Cafés</button>
+    <button mat-button routerLink="/marcas">Marcas</button>
+    <button mat-button routerLink="/categorias">Categorias</button>
+    <button mat-button routerLink="/estados">Estados</button>
+    <button mat-button routerLink="/municipios">Municípios</button>
+    <button mat-button routerLink="/usuarios">Usuários</button>
+
+    @if (authService.currentUser()) {
+      <button mat-button (click)="logout()">
+        <mat-icon>logout</mat-icon> Sair ({{ authService.currentUser()?.login }})
+      </button>
+    } @else {
+      <button mat-button routerLink="/login">
+        <mat-icon>login</mat-icon> Entrar
+      </button>
+    }
+  </div>
+</mat-toolbar>

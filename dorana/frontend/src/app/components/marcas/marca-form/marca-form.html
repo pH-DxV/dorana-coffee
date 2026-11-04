@@ -1,0 +1,35 @@
+<mat-toolbar class="toolbar-title">
+    Controle de Marcas
+</mat-toolbar>
+
+<mat-card class="card">
+    <mat-card-content>
+        <form [formGroup]="form">
+            <mat-form-field appearance="outline">
+                <mat-label>Nome</mat-label>
+                <input matInput formControlName="nome" placeholder="Ex. Orfeu">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Descrição</mat-label>
+                <input matInput formControlName="descricao" placeholder="Descrição da marca">
+            </mat-form-field>
+        </form>
+    </mat-card-content>
+
+    <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="salvar()">
+            Salvar
+        </button>
+
+        @if (form.value.id) {
+            <button mat-raised-button color="warn" (click)="excluir()">
+                Excluir
+            </button>
+        }
+
+        <button mat-button (click)="voltar()">
+            Cancelar
+        </button>
+    </mat-card-actions>
+</mat-card>

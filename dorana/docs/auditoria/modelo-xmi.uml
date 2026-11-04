@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_modelo_coffehouse" name="LgcCoffeeHouseModel">
+  <packagedElement xmi:type="uml:Class" xmi:id="_DefaultEntity" name="DefaultEntity" isAbstract="true">
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_DefaultEntity_id" name="id" visibility="protected">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Class" xmi:id="_Usuario" name="Usuario" isAbstract="true">
+    <generalization xmi:type="uml:Generalization" xmi:id="_gen_Usuario_DefaultEntity" general="_DefaultEntity"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Usuario_nome" name="nome" visibility="protected">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Usuario_email" name="email" visibility="protected">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Usuario_cpf" name="cpf" visibility="protected">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Usuario_login" name="login" visibility="protected">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Usuario_senha" name="senha" visibility="protected">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Usuario_dataNascimento" name="dataNascimento" visibility="protected"/>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Class" xmi:id="_Cliente" name="Cliente">
+    <generalization xmi:type="uml:Generalization" xmi:id="_gen_Cliente_Usuario" general="_Usuario"/>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Class" xmi:id="_Administrador" name="Administrador">
+    <generalization xmi:type="uml:Generalization" xmi:id="_gen_Administrador_Usuario" general="_Usuario"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Administrador_cargo" name="cargo" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Class" xmi:id="_Telefone" name="Telefone">
+    <generalization xmi:type="uml:Generalization" xmi:id="_gen_Telefone_DefaultEntity" general="_DefaultEntity"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Telefone_ddd" name="ddd" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Telefone_numero" name="numero" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Class" xmi:id="_Endereco" name="Endereco">
+    <generalization xmi:type="uml:Generalization" xmi:id="_gen_Endereco_DefaultEntity" general="_DefaultEntity"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Endereco_cep" name="cep" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Endereco_rua" name="rua" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Endereco_numero" name="numero" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Endereco_complemento" name="complemento" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Endereco_bairro" name="bairro" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Class" xmi:id="_Estado" name="Estado">
+    <generalization xmi:type="uml:Generalization" xmi:id="_gen_Estado_DefaultEntity" general="_DefaultEntity"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Estado_nome" name="nome" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Estado_sigla" name="sigla" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Class" xmi:id="_Municipio" name="Municipio">
+    <generalization xmi:type="uml:Generalization" xmi:id="_gen_Municipio_DefaultEntity" general="_DefaultEntity"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Municipio_nome" name="nome" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Class" xmi:id="_Cafe" name="Cafe">
+    <generalization xmi:type="uml:Generalization" xmi:id="_gen_Cafe_DefaultEntity" general="_DefaultEntity"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Cafe_nome" name="nome" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Cafe_descricao" name="descricao" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Cafe_preco" name="preco" visibility="private"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Cafe_peso" name="peso" visibility="private"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Cafe_pontuacaoSCA" name="pontuacaoSCA" visibility="private"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Cafe_ativo" name="ativo" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
+    </ownedAttribute>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Class" xmi:id="_Estoque" name="Estoque">
+    <generalization xmi:type="uml:Generalization" xmi:id="_gen_Estoque_DefaultEntity" general="_DefaultEntity"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Estoque_quantidade" name="quantidade" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Estoque_version" name="version" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Class" xmi:id="_Pedido" name="Pedido">
+    <generalization xmi:type="uml:Generalization" xmi:id="_gen_Pedido_DefaultEntity" general="_DefaultEntity"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Pedido_dataCriacao" name="dataCriacao" visibility="private"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Pedido_total" name="total" visibility="private"/>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Class" xmi:id="_ItemPedido" name="ItemPedido">
+    <generalization xmi:type="uml:Generalization" xmi:id="_gen_ItemPedido_DefaultEntity" general="_DefaultEntity"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_ItemPedido_quantidade" name="quantidade" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_ItemPedido_precoUnitario" name="precoUnitario" visibility="private"/>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Class" xmi:id="_Pagamento" name="Pagamento" isAbstract="true">
+    <generalization xmi:type="uml:Generalization" xmi:id="_gen_Pagamento_DefaultEntity" general="_DefaultEntity"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Pagamento_dataConfirmacao" name="dataConfirmacao" visibility="private"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Pagamento_valor" name="valor" visibility="private"/>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Class" xmi:id="_PagamentoCartao" name="PagamentoCartao">
+    <generalization xmi:type="uml:Generalization" xmi:id="_gen_PagamentoCartao_Pagamento" general="_Pagamento"/>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Class" xmi:id="_PagamentoBoleto" name="PagamentoBoleto">
+    <generalization xmi:type="uml:Generalization" xmi:id="_gen_PagamentoBoleto_Pagamento" general="_Pagamento"/>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Class" xmi:id="_PagamentoPix" name="PagamentoPix">
+    <generalization xmi:type="uml:Generalization" xmi:id="_gen_PagamentoPix_Pagamento" general="_Pagamento"/>
+  </packagedElement>
+
+  <!-- Associações -->
+  <packagedElement xmi:type="uml:Association" xmi:id="_assoc_Usuario_Telefones" name="usuario_telefones" memberEnd="_assoc_Usuario_Telefones_src _assoc_Usuario_Telefones_dst">
+    <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_Usuario_Telefones_src" type="_Usuario" association="_assoc_Usuario_Telefones"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_Usuario_Telefones_dst" type="_Telefone" aggregation="composite" association="_assoc_Usuario_Telefones">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_lv_tel" value="0"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_uv_tel" value="*"/>
+    </ownedEnd>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Association" xmi:id="_assoc_Usuario_Enderecos" name="usuario_enderecos" memberEnd="_assoc_Usuario_Enderecos_src _assoc_Usuario_Enderecos_dst">
+    <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_Usuario_Enderecos_src" type="_Usuario" association="_assoc_Usuario_Enderecos"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_Usuario_Enderecos_dst" type="_Endereco" aggregation="composite" association="_assoc_Usuario_Enderecos">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_lv_end" value="0"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_uv_end" value="*"/>
+    </ownedEnd>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Association" xmi:id="_assoc_Endereco_Municipio" name="endereco_municipio" memberEnd="_assoc_Endereco_Municipio_src _assoc_Endereco_Municipio_dst">
+    <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_Endereco_Municipio_src" type="_Endereco" association="_assoc_Endereco_Municipio"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_Endereco_Municipio_dst" type="_Municipio" association="_assoc_Endereco_Municipio"/>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Association" xmi:id="_assoc_Municipio_Estado" name="municipio_estado" memberEnd="_assoc_Municipio_Estado_src _assoc_Municipio_Estado_dst">
+    <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_Municipio_Estado_src" type="_Municipio" association="_assoc_Municipio_Estado"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_Municipio_Estado_dst" type="_Estado" association="_assoc_Municipio_Estado"/>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Association" xmi:id="_assoc_Estoque_Cafe" name="estoque_cafe" memberEnd="_assoc_Estoque_Cafe_src _assoc_Estoque_Cafe_dst">
+    <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_Estoque_Cafe_src" type="_Estoque" association="_assoc_Estoque_Cafe"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_Estoque_Cafe_dst" type="_Cafe" association="_assoc_Estoque_Cafe"/>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Association" xmi:id="_assoc_Pedido_Cliente" name="pedido_cliente" memberEnd="_assoc_Pedido_Cliente_src _assoc_Pedido_Cliente_dst">
+    <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_Pedido_Cliente_src" type="_Pedido" association="_assoc_Pedido_Cliente"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_Pedido_Cliente_dst" type="_Cliente" association="_assoc_Pedido_Cliente"/>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Association" xmi:id="_assoc_Pedido_ItemPedido" name="pedido_itens" memberEnd="_assoc_Pedido_ItemPedido_src _assoc_Pedido_ItemPedido_dst">
+    <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_Pedido_ItemPedido_src" type="_Pedido" association="_assoc_Pedido_ItemPedido"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_Pedido_ItemPedido_dst" type="_ItemPedido" aggregation="composite" association="_assoc_Pedido_ItemPedido">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_lv_item" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_uv_item" value="*"/>
+    </ownedEnd>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Association" xmi:id="_assoc_ItemPedido_Cafe" name="itempedido_cafe" memberEnd="_assoc_ItemPedido_Cafe_src _assoc_ItemPedido_Cafe_dst">
+    <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_ItemPedido_Cafe_src" type="_ItemPedido" association="_assoc_ItemPedido_Cafe"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_ItemPedido_Cafe_dst" type="_Cafe" association="_assoc_ItemPedido_Cafe"/>
+  </packagedElement>
+
+  <packagedElement xmi:type="uml:Association" xmi:id="_assoc_Pedido_Pagamento" name="pedido_pagamento" memberEnd="_assoc_Pedido_Pagamento_src _assoc_Pedido_Pagamento_dst">
+    <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_Pedido_Pagamento_src" type="_Pedido" association="_assoc_Pedido_Pagamento"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_Pedido_Pagamento_dst" type="_Pagamento" association="_assoc_Pedido_Pagamento">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_lv_pag" value="0"/>
+      <upperValue xmi:type="uml:LiteralInteger" xmi:id="_uv_pag" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+</uml:Model>

@@ -1,0 +1,293 @@
+@startuml DiagramaClassesAlvo
+
+skinparam classAttributeIconSize 0
+skinparam monochrome false
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam roundcorner 5
+
+abstract class DefaultEntity <<MappedSuperclass>> {
+    # Long id
+    + getId(): Long
+    + setId(Long id): void
+}
+
+abstract class Usuario <<JOINED>> {
+    # String nome
+    # String email
+    # String cpf
+    # String login
+    # String senha
+    # LocalDate dataNascimento
+    + getNome(): String
+    + getEmail(): String
+    + getCpf(): String
+    + getLogin(): String
+    + getSenha(): String
+    + getDataNascimento(): LocalDate
+    + getPerfis(): Set<Perfil>
+}
+
+class Cliente <<JOINED>> {
+}
+
+class Administrador <<JOINED>> {
+    - String cargo
+    + getCargo(): String
+    + setCargo(String cargo): void
+}
+
+enum Perfil {
+    ADMINISTRADOR
+    CLIENTE
+    - Long id
+    - String label
+    + getId(): Long
+    + getLabel(): String
+    + {static} valueOf(Long id): Perfil
+}
+
+class Telefone {
+    - String ddd
+    - String numero
+    + getDdd(): String
+    + getNumero(): String
+    + getUsuario(): Usuario
+}
+
+class Endereco {
+    - String cep
+    - String rua
+    - String numero
+    - String complemento
+    - String bairro
+    + getCep(): String
+    + getRua(): String
+    + getNumero(): String
+    + getComplemento(): String
+    + getBairro(): String
+    + getMunicipio(): Municipio
+    + getUsuario(): Usuario
+}
+
+class Estado {
+    - String nome
+    - String sigla
+    + getNome(): String
+    + getSigla(): String
+    + getRegiao(): Regiao
+}
+
+class Municipio {
+    - String nome
+    + getNome(): String
+    + getEstado(): Estado
+}
+
+enum Regiao {
+    CENTRO_OESTE
+    NORDESTE
+    NORTE
+    SUDESTE
+    SUL
+    - Long id
+    - String label
+    + getId(): Long
+    + getLabel(): String
+}
+
+class RegiaoDeOrigem {
+    - String nome
+    - String estado
+    + getNome(): String
+    + getEstado(): String
+}
+
+class Marca {
+    - String nome
+    - String descricao
+    + getNome(): String
+    + getDescricao(): String
+}
+
+class CategoriaDoCafe {
+    - String nome
+    - String descricao
+    + getNome(): String
+    + getDescricao(): String
+}
+
+class Cafe {
+    - String nome
+    - String descricao
+    - BigDecimal preco
+    - Double peso
+    - Integer pontuacaoSCA
+    - Boolean ativo
+    + getNome(): String
+    + getDescricao(): String
+    + getPreco(): BigDecimal
+    + getPeso(): Double
+    + getPontuacaoSCA(): Integer
+    + isAtivo(): Boolean
+    + getNivelDeTorra(): NivelDeTorra
+    + getTratamento(): Tratamento
+    + getMarca(): Marca
+    + getCategoriaDoCafe(): CategoriaDoCafe
+    + getRegiaoDeOrigem(): RegiaoDeOrigem
+    + getNotasSensoriais(): Set<NotaSensorial>
+}
+
+enum NivelDeTorra {
+    CLARA
+    MEDIA
+    ESCURA
+    - Long id
+    - String label
+}
+
+enum Tratamento {
+    NATURAL
+    LAVADO
+    CD
+    HONEY
+    - Long id
+    - String label
+}
+
+enum NotaSensorial {
+    FRUTADO
+    FLORAL
+    CHOCOLATE
+    CARAMELO
+    CITRICO
+    ESPECIARIAS
+    - Long id
+    - String label
+}
+
+class Estoque {
+    - Integer quantidade
+    - Long version
+    + getQuantidade(): Integer
+    + getVersion(): Long
+    + getCafe(): Cafe
+    + setQuantidade(Integer quantidade): void
+}
+
+class ItemPedido {
+    - Integer quantidade
+    - BigDecimal precoUnitario
+    + getQuantidade(): Integer
+    + getPrecoUnitario(): BigDecimal
+    + getCafe(): Cafe
+    + getPedido(): Pedido
+}
+
+class Pedido {
+    - LocalDateTime dataCriacao
+    - BigDecimal total
+    + getDataCriacao(): LocalDateTime
+    + getTotal(): BigDecimal
+    + getStatus(): PedidoStatus
+    + getCliente(): Cliente
+    + getItens(): List<ItemPedido>
+    + getPagamento(): Pagamento
+    + setStatus(PedidoStatus status): void
+}
+
+enum PedidoStatus {
+    AGUARDANDO_PAGAMENTO
+    PAGO
+    ENVIADO
+    ENTREGUE
+    CANCELADO
+    - Long id
+    - String label
+    + getId(): Long
+    + getLabel(): String
+}
+
+abstract class Pagamento <<JOINED>> {
+    - LocalDateTime dataConfirmacao
+    - BigDecimal valor
+    + getDataConfirmacao(): LocalDateTime
+    + getValor(): BigDecimal
+    + getStatus(): PagamentoStatus
+}
+
+enum PagamentoStatus {
+    PENDENTE
+    CONFIRMADO
+    RECUSADO
+    ESTORNADO
+    - Long id
+    - String label
+}
+
+class PagamentoCartao <<JOINED>> {
+    - String nomeTitular
+    - String numeroCartao
+    - String bandeira
+    - String validade
+    - String cvv
+}
+
+class PagamentoBoleto <<JOINED>> {
+    - String codigoBarras
+    - LocalDate dataVencimento
+}
+
+class PagamentoPix <<JOINED>> {
+    - String chavePix
+    - String qrCode
+}
+
+' Relacionamentos de Herança
+DefaultEntity <|-- Usuario
+DefaultEntity <|-- Telefone
+DefaultEntity <|-- Endereco
+DefaultEntity <|-- Estado
+DefaultEntity <|-- Municipio
+DefaultEntity <|-- RegiaoDeOrigem
+DefaultEntity <|-- Marca
+DefaultEntity <|-- CategoriaDoCafe
+DefaultEntity <|-- Cafe
+DefaultEntity <|-- Estoque
+DefaultEntity <|-- ItemPedido
+DefaultEntity <|-- Pedido
+DefaultEntity <|-- Pagamento
+
+Usuario <|-- Cliente
+Usuario <|-- Administrador
+
+Pagamento <|-- PagamentoCartao
+Pagamento <|-- PagamentoBoleto
+Pagamento <|-- PagamentoPix
+
+' Relacionamentos de Associação e Composição
+Usuario "1" *-- "0..*" Telefone : possui
+Usuario "1" *-- "0..*" Endereco : possui
+Usuario "0..*" o-- "1..*" Perfil : roles
+
+Municipio "0..*" --> "1" Estado : pertence a
+Estado "0..*" --> "1" Regiao : localizada em
+Endereco "0..*" --> "1" Municipio : localizado em
+
+Cafe "0..*" --> "1" Marca : marca
+Cafe "0..*" --> "1" CategoriaDoCafe : categoria
+Cafe "0..*" --> "0..1" RegiaoDeOrigem : regiao
+Cafe "0..*" --> "1" NivelDeTorra : torra
+Cafe "0..*" --> "1" Tratamento : tratamento
+Cafe "0..*" o-- "0..*" NotaSensorial : notas
+
+Estoque "1" -- "1" Cafe : controla estoque de
+
+Pedido "0..*" --> "1" Cliente : realizado por
+Pedido "1" *-- "1..*" ItemPedido : contem
+ItemPedido "0..*" --> "1" Cafe : referencia
+Pedido "1" --> "1" PedidoStatus : status
+Pedido "1" o-- "0..1" Pagamento : pago com
+Pagamento "1" --> "1" PagamentoStatus : status
+
+@enduml
