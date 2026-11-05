@@ -1,8 +1,9 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 import { CafeService } from '../../../services/cafe.service';
-import { Cafe } from '../../../models/cafe.model';
+import { Cafe, getCafeImage } from '../../../models/cafe.model';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,6 +20,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
   templateUrl: './cafe-list.html',
   styleUrl: './cafe-list.css',
   imports: [
+    CommonModule,
     MatTableModule,
     MatInputModule,
     MatFormFieldModule,
@@ -29,7 +31,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
     RouterLink
   ]
 })
-export class CafeListComponent implements AfterViewInit {
+export class CafeListComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = [
     'numero',
@@ -80,5 +82,9 @@ export class CafeListComponent implements AfterViewInit {
         console.error('Erro ao excluir café:', error);
       }
     });
+  }
+
+  obterImagem(cafe: Cafe, idx = 0): string {
+    return getCafeImage(cafe, idx);
   }
 }

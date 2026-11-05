@@ -1,28 +1,404 @@
-<div class="login-container">
-  <mat-card class="login-card">
-    <mat-card-header>
-      <mat-card-title>Login</mat-card-title>
-      <mat-card-subtitle>Acesse o CoffeeHouse</mat-card-subtitle>
-    </mat-card-header>
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+  <!-- Cabeçalho Editorial da Tela de Autenticação e Cadastro -->
+  <div class="text-center max-w-2xl mx-auto mb-10">
+    <span class="text-xs font-label uppercase tracking-[0.2em] text-[#885031] font-bold">
+      Clube de Apreciadores • Dorana Coffee Shop
+    </span>
+    <h1 class="font-headline text-3xl sm:text-4xl font-bold text-[#251914] mt-1">
+      Autenticação &amp; Cadastro
+    </h1>
+    <p class="text-xs sm:text-sm text-[#4f4541] mt-2">
+      Acesse sua conta para acompanhar pedidos de torra fresca ou crie seu cadastro completo para comprar microlotes especiais.
+    </p>
+  </div>
 
-    <mat-card-content>
-      <form [formGroup]="form" (ngSubmit)="entrar()">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Login / Usuário</mat-label>
-          <input matInput formControlName="login" placeholder="Ex. admin">
-        </mat-form-field>
+  <!-- Alertas de Feedback -->
+  @if (mensagemErro(); as erro) {
+    <div class="max-w-4xl mx-auto mb-6 p-4 rounded-xl bg-[#ffdad6] text-[#93000a] border border-[#ba1a1a]/30 flex items-center gap-3 text-xs font-semibold">
+      <span class="material-symbols-outlined">error</span>
+      <span>{{ erro }}</span>
+    </div>
+  }
+  @if (mensagemSucesso(); as ok) {
+    <div class="max-w-4xl mx-auto mb-6 p-4 rounded-xl bg-emerald-100 text-emerald-900 border border-emerald-500/30 flex items-center gap-3 text-xs font-semibold">
+      <span class="material-symbols-outlined">check_circle</span>
+      <span>{{ ok }}</span>
+    </div>
+  }
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Senha</mat-label>
-          <input matInput type="password" formControlName="senha">
-        </mat-form-field>
+  <!-- Layout Split 12 Colunas do Google Stitch: 5 cols Login + 7 cols Criar Nova Conta -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <!-- Coluna 1 (5 cols): Já Sou Cliente (POST /auth/login) -->
+    <div class="lg:col-span-5 bg-white p-7 sm:p-8 rounded-2xl border border-[#d2c3be]/45 editorial-shadow space-y-6">
+      <div class="border-b border-[#d2c3be]/30 pb-4">
+        <span class="text-[11px] uppercase tracking-[0.2em] text-[#885031] font-bold">Membro Dorana</span>
+        <h2 class="font-headline text-2xl font-bold text-[#251914] mt-0.5">Já Sou Cliente</h2>
+        <p class="text-xs text-[#4f4541] mt-1">Informe suas credenciais de acesso.</p>
+      </div>
 
-        <div class="actions">
-          <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
-            Entrar
+      <form [formGroup]="form" (ngSubmit)="entrar()" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-[#251914] mb-1.5">
+            Login ou Usuário *
+          </label>
+          <div class="relative">
+            <span class="material-symbols-outlined text-[#807570] text-lg absolute left-3.5 top-2.5">person</span>
+            <input
+              type="text"
+              formControlName="login"
+              placeholder="Ex: joao ou maria"
+              class="w-full bg-[#fff8f6] text-xs text-[#251914] rounded-xl pl-10 pr-4 py-3 border border-[#d2c3be] focus:outline-none focus:border-[#885031]"
+            />
+          </div>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="block text-xs font-bold uppercase tracking-wider text-[#251914]">
+              Senha *
+            </label>
+            <button
+              type="button"
+              (click)="abrirRecuperacaoSenha()"
+              class="text-xs font-semibold text-[#885031] hover:underline">
+              Esqueceu a senha?
+            </button>
+          </div>
+          <div class="relative">
+            <span class="material-symbols-outlined text-[#807570] text-lg absolute left-3.5 top-2.5">lock</span>
+            <input
+              [type]="mostrarSenhaLogin() ? 'text' : 'password'"
+              formControlName="senha"
+              placeholder="••••••••"
+              class="w-full bg-[#fff8f6] text-xs text-[#251914] rounded-xl pl-10 pr-10 py-3 border border-[#d2c3be] focus:outline-none focus:border-[#885031]"
+            />
+            <button
+              type="button"
+              (click)="mostrarSenhaLogin.set(!mostrarSenhaLogin())"
+              class="absolute right-3 top-2.5 text-[#807570] hover:text-[#251914]">
+              <span class="material-symbols-outlined text-lg">
+                {{ mostrarSenhaLogin() ? 'visibility_off' : 'visibility' }}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="carregandoLogin()"
+          class="w-full py-3.5 px-6 rounded-xl bg-[#130804] hover:bg-[#261912] text-[#fdb38d] font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition-all">
+          <span class="material-symbols-outlined text-base">login</span>
+          <span>{{ carregandoLogin() ? 'Autenticando...' : 'Entrar na Minha Conta' }}</span>
+        </button>
+      </form>
+
+      <div class="bg-[#fff1ec] p-4 rounded-xl border border-[#d2c3be]/40 space-y-2 text-xs">
+        <div class="flex items-center gap-2 font-bold text-[#251914]">
+          <span class="material-symbols-outlined text-[#885031] text-base">verified_user</span>
+          <span>Acesso Seguro JWT</span>
+        </div>
+        <p class="text-[11px] text-[#4f4541]">
+          Suas sessões são criptografadas com chaves RSA-2048 pelo servidor Quarkus da Dorana Coffee Shop.
+        </p>
+      </div>
+    </div>
+
+    <!-- Coluna 2 (7 cols): Criar Nova Conta (POST /clientes) -->
+    <div class="lg:col-span-7 bg-[#fff1ec] p-7 sm:p-8 rounded-2xl border border-[#d2c3be]/50 editorial-shadow space-y-6">
+      <div class="border-b border-[#d2c3be]/40 pb-4">
+        <span class="text-[11px] uppercase tracking-[0.2em] text-[#885031] font-bold">Novo Cadastro</span>
+        <h2 class="font-headline text-2xl font-bold text-[#251914] mt-0.5">Criar Nova Conta</h2>
+        <p class="text-xs text-[#4f4541] mt-1">
+          Cadastre seus dados pessoais, telefone e endereço principal para entregas de cafés recém-torrados.
+        </p>
+      </div>
+
+      <form [formGroup]="cadastroForm" (ngSubmit)="cadastrarCliente()" class="space-y-5 text-xs">
+        <!-- Bloco 1: Dados Pessoais & Credenciais -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="sm:col-span-2">
+            <label class="block font-bold text-[#251914] mb-1">Nome Completo *</label>
+            <input
+              type="text"
+              formControlName="nome"
+              placeholder="Ex: Ana Clara Mendonça"
+              class="w-full bg-white rounded-xl px-3.5 py-2.5 border border-[#d2c3be]"
+            />
+          </div>
+
+          <div>
+            <label class="block font-bold text-[#251914] mb-1">E-mail *</label>
+            <input
+              type="email"
+              formControlName="email"
+              placeholder="ana@email.com"
+              class="w-full bg-white rounded-xl px-3.5 py-2.5 border border-[#d2c3be]"
+            />
+          </div>
+
+          <div>
+            <label class="block font-bold text-[#251914] mb-1">Login de Acesso *</label>
+            <input
+              type="text"
+              formControlName="login"
+              placeholder="anaclara"
+              class="w-full bg-white rounded-xl px-3.5 py-2.5 border border-[#d2c3be]"
+            />
+          </div>
+
+          <div>
+            <label class="block font-bold text-[#251914] mb-1">CPF (11 dígitos) *</label>
+            <input
+              type="text"
+              formControlName="cpf"
+              maxlength="14"
+              placeholder="12345678909"
+              class="w-full bg-white rounded-xl px-3.5 py-2.5 border border-[#d2c3be] tabular-nums"
+            />
+          </div>
+
+          <div>
+            <label class="block font-bold text-[#251914] mb-1">Data de Nascimento *</label>
+            <input
+              type="date"
+              formControlName="dataNascimento"
+              class="w-full bg-white rounded-xl px-3.5 py-2.5 border border-[#d2c3be] tabular-nums"
+            />
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block font-bold text-[#251914] mb-1">Senha (mínimo 6 caracteres) *</label>
+            <div class="relative">
+              <input
+                [type]="mostrarSenhaCadastro() ? 'text' : 'password'"
+                formControlName="senha"
+                (input)="senhaDigitadaCadastro.set($any($event.target).value)"
+                placeholder="Crie uma senha forte"
+                class="w-full bg-white rounded-xl px-3.5 py-2.5 pr-10 border border-[#d2c3be]"
+              />
+              <button
+                type="button"
+                (click)="mostrarSenhaCadastro.set(!mostrarSenhaCadastro())"
+                class="absolute right-3 top-2 text-[#807570]">
+                <span class="material-symbols-outlined text-lg">
+                  {{ mostrarSenhaCadastro() ? 'visibility_off' : 'visibility' }}
+                </span>
+              </button>
+            </div>
+            <!-- Barra de Força da Senha -->
+            <div class="mt-2 space-y-1">
+              <div class="flex justify-between text-[10px]">
+                <span class="text-[#4f4541]">Segurança da senha:</span>
+                <span class="font-bold text-[#251914]">{{ nivelForcaSenha().label }}</span>
+              </div>
+              <div class="h-1.5 w-full bg-[#f5ded5] rounded-full overflow-hidden">
+                <div
+                  class="h-full transition-all duration-300"
+                  [ngClass]="nivelForcaSenha().cor"
+                  [style.width.%]="nivelForcaSenha().pontos"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco 2: Telefone de Contato -->
+        <div class="pt-3 border-t border-[#d2c3be]/40">
+          <h3 class="font-bold uppercase tracking-wider text-[#885031] text-[11px] mb-3">
+            Telefone para Contato
+          </h3>
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block font-bold text-[#251914] mb-1">DDD *</label>
+              <input
+                type="text"
+                formControlName="ddd"
+                maxlength="2"
+                placeholder="63"
+                class="w-full bg-white rounded-xl px-3 py-2.5 border border-[#d2c3be] tabular-nums"
+              />
+            </div>
+            <div class="col-span-2">
+              <label class="block font-bold text-[#251914] mb-1">Número de Telefone *</label>
+              <input
+                type="text"
+                formControlName="telefoneNumero"
+                maxlength="10"
+                placeholder="999998888"
+                class="w-full bg-white rounded-xl px-3 py-2.5 border border-[#d2c3be] tabular-nums"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco 3: Endereço Principal de Entrega -->
+        <div class="pt-3 border-t border-[#d2c3be]/40">
+          <h3 class="font-bold uppercase tracking-wider text-[#885031] text-[11px] mb-3">
+            Endereço Principal de Entrega
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block font-bold text-[#251914] mb-1">CEP *</label>
+              <input
+                type="text"
+                formControlName="cep"
+                placeholder="77000-000"
+                class="w-full bg-white rounded-xl px-3 py-2.5 border border-[#d2c3be] tabular-nums"
+              />
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block font-bold text-[#251914] mb-1">Rua / Logradouro *</label>
+              <input
+                type="text"
+                formControlName="rua"
+                placeholder="Quadra 104 Sul, Alameda 1"
+                class="w-full bg-white rounded-xl px-3 py-2.5 border border-[#d2c3be]"
+              />
+            </div>
+            <div>
+              <label class="block font-bold text-[#251914] mb-1">Número *</label>
+              <input
+                type="text"
+                formControlName="numero"
+                placeholder="10"
+                class="w-full bg-white rounded-xl px-3 py-2.5 border border-[#d2c3be]"
+              />
+            </div>
+            <div>
+              <label class="block font-bold text-[#251914] mb-1">Complemento</label>
+              <input
+                type="text"
+                formControlName="complemento"
+                placeholder="Casa / Apto"
+                class="w-full bg-white rounded-xl px-3 py-2.5 border border-[#d2c3be]"
+              />
+            </div>
+            <div>
+              <label class="block font-bold text-[#251914] mb-1">Bairro *</label>
+              <input
+                type="text"
+                formControlName="bairro"
+                placeholder="Plano Diretor Sul"
+                class="w-full bg-white rounded-xl px-3 py-2.5 border border-[#d2c3be]"
+              />
+            </div>
+            <div class="sm:col-span-3">
+              <label class="block font-bold text-[#251914] mb-1">Município / Estado *</label>
+              <select
+                formControlName="idMunicipio"
+                class="w-full bg-white rounded-xl px-3 py-2.5 border border-[#d2c3be]">
+                @for (m of municipios(); track m.id) {
+                  <option [ngValue]="m.id">{{ m.nome }} - {{ m.estado?.sigla }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="carregandoCadastro()"
+          class="w-full py-4 px-6 rounded-xl bg-[#885031] hover:bg-[#723e21] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-all">
+          <span class="material-symbols-outlined text-base">person_add</span>
+          <span>{{ carregandoCadastro() ? 'Registrando Conta...' : 'Criar Minha Conta na Dorana' }}</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Modal de Recuperação de Senha & Nova Senha (Telas 14 e 15 do Stitch) -->
+@if (modalRecuperacaoAberto()) {
+  <div class="fixed inset-0 z-50 bg-black/65 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-[#fff8f6] rounded-2xl max-w-md w-full p-7 border border-[#d2c3be] shadow-2xl space-y-5">
+      <div class="flex items-start justify-between border-b border-[#d2c3be]/40 pb-4">
+        <div>
+          <span class="text-[10px] uppercase tracking-[0.2em] text-[#885031] font-bold">Segurança Dorana</span>
+          <h3 class="font-headline text-2xl font-bold text-[#251914]">
+            @if (etapaRecuperacao() === 'SOLICITAR') { Recuperação de Senha }
+            @else if (etapaRecuperacao() === 'NOVA_SENHA') { Definir Nova Senha }
+            @else { Senha Atualizada! }
+          </h3>
+        </div>
+        <button type="button" (click)="fecharRecuperacaoSenha()" class="text-[#807570] hover:text-[#251914]">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      @if (etapaRecuperacao() === 'SOLICITAR') {
+        <div class="space-y-4 text-xs">
+          <p class="text-[#4f4541] leading-relaxed">
+            Informe o e-mail ou login associado à sua conta na Dorana Coffee Shop para iniciar o fluxo de redefinição de credenciais.
+          </p>
+          <div>
+            <label class="block font-bold text-[#251914] mb-1">E-mail ou Login Cadastrado *</label>
+            <input
+              type="text"
+              [(ngModel)]="emailRecuperacao"
+              placeholder="seuemail@dominio.com"
+              class="w-full bg-white rounded-xl px-3.5 py-2.5 border border-[#d2c3be]"
+            />
+          </div>
+          <button
+            type="button"
+            (click)="avancarParaNovaSenha()"
+            class="w-full py-3 rounded-xl bg-[#885031] text-white font-bold uppercase tracking-wider">
+            Continuar para Redefinição
           </button>
         </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
-</div>
+      } @else if (etapaRecuperacao() === 'NOVA_SENHA') {
+        <div class="space-y-4 text-xs">
+          @if (authService.isAuthenticated()) {
+            <div>
+              <label class="block font-bold text-[#251914] mb-1">Senha Atual *</label>
+              <input
+                type="password"
+                [(ngModel)]="senhaAntigaRedefinicao"
+                placeholder="••••••••"
+                class="w-full bg-white rounded-xl px-3.5 py-2.5 border border-[#d2c3be]"
+              />
+            </div>
+          }
+          <div>
+            <label class="block font-bold text-[#251914] mb-1">Nova Senha (mínimo 6 caracteres) *</label>
+            <input
+              type="password"
+              [(ngModel)]="novaSenhaRedefinicao"
+              placeholder="Nova senha segura"
+              class="w-full bg-white rounded-xl px-3.5 py-2.5 border border-[#d2c3be]"
+            />
+          </div>
+          <div>
+            <label class="block font-bold text-[#251914] mb-1">Confirmar Nova Senha *</label>
+            <input
+              type="password"
+              [(ngModel)]="confirmarNovaSenha"
+              placeholder="Repita a nova senha"
+              class="w-full bg-white rounded-xl px-3.5 py-2.5 border border-[#d2c3be]"
+            />
+          </div>
+          <button
+            type="button"
+            (click)="confirmarRedefinicaoSenha()"
+            class="w-full py-3 rounded-xl bg-[#885031] text-white font-bold uppercase tracking-wider">
+            Salvar Nova Senha
+          </button>
+        </div>
+      } @else {
+        <div class="text-center space-y-4 py-2">
+          <div class="w-14 h-14 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto">
+            <span class="material-symbols-outlined text-3xl">verified</span>
+          </div>
+          <p class="text-xs text-[#4f4541]">
+            Suas instruções de segurança foram processadas com sucesso. Você já pode acessar sua conta.
+          </p>
+          <button
+            type="button"
+            (click)="fecharRecuperacaoSenha()"
+            class="w-full py-3 rounded-xl bg-[#130804] text-[#fdb38d] font-bold text-xs uppercase tracking-wider">
+            Voltar ao Login
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+}

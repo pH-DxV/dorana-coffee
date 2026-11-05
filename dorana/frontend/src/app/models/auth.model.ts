@@ -1,3 +1,8 @@
+export interface PerfilAuthDTO {
+  id?: number;
+  label?: string;
+}
+
 export interface LoginDTO {
   login: string;
   senha: string;
@@ -10,4 +15,5 @@ export interface AuthDTOResponse {
   email?: string;
   token?: string;
   perfil?: string;
+  perfis?: PerfilAuthDTO[];
 }

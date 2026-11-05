@@ -1,164 +1,160 @@
-<mat-toolbar class="mat-toolbar">
-    <div class="flex-container">
-        <span class="toolbar-title">Controle de Cafés</span>
-
-        <button
-            mat-fab
-            class="accent"
-            routerLink="/cafes/new">
-
-            <mat-icon>add</mat-icon>
-
-        </button>
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
+  <!-- Cabeçalho Gestão de Cafés — Stitch Screen 9 -->
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#d2c3be]/40 pb-6">
+    <div>
+      <span class="text-xs font-label uppercase tracking-[0.2em] text-[#885031] font-bold">
+        Curadoria &amp; Cadastro Técnico
+      </span>
+      <h1 class="font-headline text-3xl sm:text-4xl font-bold text-[#251914] mt-1">
+        Gestão de Cafés &amp; Microlotes
+      </h1>
+      <p class="text-xs text-[#4f4541] mt-1">
+        Gerencie fichas sensoriais, pontuações SCA, níveis de torra, preços e saldos dos grãos comercializados.
+      </p>
     </div>
-</mat-toolbar>
 
+    <div class="flex items-center gap-3">
+      <a
+        routerLink="/estoque"
+        class="px-4 py-2.5 rounded-xl border border-[#d2c3be] bg-white hover:bg-[#fff1ec] text-xs font-bold text-[#251914] flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-base">inventory_2</span>
+        <span>Controle de Estoque</span>
+      </a>
+      <a
+        routerLink="/cafes/new"
+        class="px-5 py-2.5 rounded-xl bg-[#885031] hover:bg-[#723e21] text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-md">
+        <span class="material-symbols-outlined text-base">add</span>
+        <span>Novo Microlote</span>
+      </a>
+    </div>
+  </div>
 
-<mat-form-field
-    appearance="outline"
-    class="flex-container">
-
-    <mat-label>Filtro</mat-label>
-
-    <input
-        matInput
+  <!-- Barra de Filtro -->
+  <div class="bg-white p-4 rounded-2xl border border-[#d2c3be]/40 editorial-shadow flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="relative flex-1 max-w-md">
+      <span class="material-symbols-outlined text-[#807570] text-lg absolute left-3.5 top-2.5">search</span>
+      <input
+        type="text"
         (keyup)="applyFilter($event)"
-        placeholder="Ex. Café Especial">
+        placeholder="Filtrar por nome do microlote, marca ou categoria..."
+        class="w-full bg-[#fff8f6] text-xs text-[#251914] rounded-xl pl-10 pr-4 py-2.5 border border-[#d2c3be] focus:outline-none focus:border-[#885031]"
+      />
+    </div>
+    <span class="text-xs text-[#4f4541] font-medium tabular-nums">
+      Total cadastrado: <strong class="text-[#251914]">{{ dataSource.data.length }}</strong> cafés
+    </span>
+  </div>
 
-</mat-form-field>
-
-
-<table
-    mat-table
-    [dataSource]="dataSource"
-    class="mat-elevation-z8">
-
-
-    <ng-container matColumnDef="numero">
-
-        <th mat-header-cell *matHeaderCellDef>
-            Número
-        </th>
-
-        <td mat-cell *matCellDef="let obj; let i = index">
+  <!-- Tabela Angular Material Estilizada conforme Stitch -->
+  <div class="bg-white rounded-2xl border border-[#d2c3be]/40 editorial-shadow overflow-hidden">
+    <div class="overflow-x-auto">
+      <table mat-table [dataSource]="dataSource" class="w-full">
+        <ng-container matColumnDef="numero">
+          <th mat-header-cell *matHeaderCellDef class="!bg-[#fff1ec] !text-[#4f4541] !text-[10px] !uppercase !tracking-wider !font-bold">
+            #
+          </th>
+          <td mat-cell *matCellDef="let obj; let i = index" class="!text-xs !font-mono !text-[#807570] tabular-nums">
             {{ i + 1 }}
-        </td>
+          </td>
+        </ng-container>
 
-    </ng-container>
+        <ng-container matColumnDef="nome">
+          <th mat-header-cell *matHeaderCellDef class="!bg-[#fff1ec] !text-[#4f4541] !text-[10px] !uppercase !tracking-wider !font-bold">
+            Microlote &amp; Perfil
+          </th>
+          <td mat-cell *matCellDef="let obj; let i = index" class="!py-3">
+            <div class="flex items-center gap-3">
+              <img
+                [src]="obterImagem(obj, i)"
+                [alt]="obj.nome"
+                class="w-10 h-10 rounded-lg object-cover shrink-0 bg-[#fff1ec]"
+              />
+              <div>
+                <a [routerLink]="['/produto', obj.id]" class="font-bold text-[#251914] hover:text-[#885031] text-xs block">
+                  {{ obj.nome }}
+                </a>
+                <span class="text-[11px] text-[#807570]">
+                  {{ obj.nivelDeTorra?.nome || 'Torra Média' }} • {{ obj.peso || 250 }}g
+                  @if (obj.pontuacaoSCA) { • SCA {{ obj.pontuacaoSCA }} }
+                </span>
+              </div>
+            </div>
+          </td>
+        </ng-container>
 
-
-    <ng-container matColumnDef="nome">
-
-        <th mat-header-cell *matHeaderCellDef>
-            Nome
-        </th>
-
-        <td mat-cell *matCellDef="let obj">
-            {{ obj.nome }}
-        </td>
-
-    </ng-container>
-
-
-    <ng-container matColumnDef="marca">
-
-        <th mat-header-cell *matHeaderCellDef>
+        <ng-container matColumnDef="marca">
+          <th mat-header-cell *matHeaderCellDef class="!bg-[#fff1ec] !text-[#4f4541] !text-[10px] !uppercase !tracking-wider !font-bold">
             Marca
-        </th>
-
-        <td mat-cell *matCellDef="let obj">
+          </th>
+          <td mat-cell *matCellDef="let obj" class="!text-xs !text-[#251914] !font-medium">
             {{ obj.marca?.nome }}
-        </td>
+          </td>
+        </ng-container>
 
-    </ng-container>
-
-
-    <ng-container matColumnDef="categoria">
-
-        <th mat-header-cell *matHeaderCellDef>
+        <ng-container matColumnDef="categoria">
+          <th mat-header-cell *matHeaderCellDef class="!bg-[#fff1ec] !text-[#4f4541] !text-[10px] !uppercase !tracking-wider !font-bold">
             Categoria
-        </th>
+          </th>
+          <td mat-cell *matCellDef="let obj" class="!text-xs">
+            <span class="px-2.5 py-1 rounded-full bg-[#ffe9e2] text-[#723e21] text-[11px] font-semibold">
+              {{ obj.categoriaDoCafe?.nome }}
+            </span>
+          </td>
+        </ng-container>
 
-        <td mat-cell *matCellDef="let obj">
-            {{ obj.categoriaDoCafe?.nome }}
-        </td>
-
-    </ng-container>
-
-
-    <ng-container matColumnDef="preco">
-
-        <th mat-header-cell *matHeaderCellDef>
+        <ng-container matColumnDef="preco">
+          <th mat-header-cell *matHeaderCellDef class="!bg-[#fff1ec] !text-[#4f4541] !text-[10px] !uppercase !tracking-wider !font-bold">
             Preço
-        </th>
+          </th>
+          <td mat-cell *matCellDef="let obj" class="!text-xs !font-bold !text-[#251914] tabular-nums">
+            R$ {{ (obj.preco || 0) | number:'1.2-2' }}
+          </td>
+        </ng-container>
 
-        <td mat-cell *matCellDef="let obj">
-            R$ {{ obj.preco }}
-        </td>
-
-    </ng-container>
-
-
-    <ng-container matColumnDef="estoque">
-
-        <th mat-header-cell *matHeaderCellDef>
+        <ng-container matColumnDef="estoque">
+          <th mat-header-cell *matHeaderCellDef class="!bg-[#fff1ec] !text-[#4f4541] !text-[10px] !uppercase !tracking-wider !font-bold">
             Estoque
-        </th>
+          </th>
+          <td mat-cell *matCellDef="let obj" class="!text-xs tabular-nums">
+            <span
+              [class]="(obj.estoque ?? 0) <= 5
+                ? 'px-2.5 py-1 rounded-full bg-[#ffdad6] text-[#93000a] font-bold text-[11px]'
+                : 'px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[11px]'">
+              {{ obj.estoque }} un.
+            </span>
+          </td>
+        </ng-container>
 
-        <td mat-cell *matCellDef="let obj">
-            {{ obj.estoque }}
-        </td>
-
-    </ng-container>
-
-
-    <ng-container matColumnDef="acao">
-
-        <th mat-header-cell *matHeaderCellDef>
-            Ação
-        </th>
-
-        <td mat-cell *matCellDef="let obj">
-
+        <ng-container matColumnDef="acao">
+          <th mat-header-cell *matHeaderCellDef class="!bg-[#fff1ec] !text-[#4f4541] !text-[10px] !uppercase !tracking-wider !font-bold !text-right">
+            Ações
+          </th>
+          <td mat-cell *matCellDef="let obj" class="!text-right">
             <button
-                mat-icon-button
-                color="primary"
-                routerLink="/cafes/edit/{{ obj.id }}">
-
-                <mat-icon>edit</mat-icon>
-
+              mat-icon-button
+              color="primary"
+              routerLink="/cafes/edit/{{ obj.id }}"
+              title="Editar Café">
+              <mat-icon>edit</mat-icon>
             </button>
-
-
             <button
-                mat-icon-button
-                color="warn"
-                (click)="excluir(obj.id)">
-
-                <mat-icon>delete</mat-icon>
-
+              mat-icon-button
+              color="warn"
+              (click)="excluir(obj.id)"
+              title="Excluir Café">
+              <mat-icon>delete</mat-icon>
             </button>
+          </td>
+        </ng-container>
 
-        </td>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:!bg-[#fff8f6]"></tr>
+      </table>
+    </div>
 
-    </ng-container>
-
-
-    <tr
-        mat-header-row
-        *matHeaderRowDef="displayedColumns">
-    </tr>
-
-
-    <tr
-        mat-row
-        *matRowDef="let row; columns: displayedColumns;">
-    </tr>
-
-</table>
-
-
-<mat-paginator
-    [pageSizeOptions]="[5, 10, 25]"
-    showFirstLastButtons>
-</mat-paginator>
+    <mat-paginator
+      [pageSizeOptions]="[5, 10, 25]"
+      showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</section>

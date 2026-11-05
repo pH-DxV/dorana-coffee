@@ -67,6 +67,21 @@ export class AuthService {
     return !!this.getToken();
   }
 
+  isAdmin(): boolean {
+    const user = this.currentUser();
+    if (!user) return false;
+    if (user.perfil && user.perfil.toLowerCase().includes('admin')) {
+      return true;
+    }
+    if (Array.isArray(user.perfis)) {
+      return user.perfis.some(p =>
+        p?.id === 1 ||
+        (typeof p?.label === 'string' && p.label.toLowerCase().includes('admin'))
+      );
+    }
+    return false;
+  }
+
   private setStoredUser(user: AuthDTOResponse): void {
     if (typeof window !== 'undefined') {
       localStorage.setItem(this.USER_KEY, JSON.stringify(user));

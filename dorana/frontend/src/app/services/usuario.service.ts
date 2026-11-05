@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Usuario } from '../models/usuario.model';
+import { AlterarSenhaDTO } from '../models/cliente.model';
 
 @Injectable({
   providedIn: 'root'
@@ -26,11 +27,19 @@ export class UsuarioService {
     return this.http.get<Usuario[]>(url);
   }
 
-  create(usuario: Usuario): Observable<Usuario> {
+  getMe(): Observable<Usuario> {
+    return this.http.get<Usuario>(`${this.apiUrl}/me`);
+  }
+
+  alterarMinhaSenha(dto: AlterarSenhaDTO): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/me/senha`, dto);
+  }
+
+  create(usuario: Usuario | any): Observable<Usuario> {
     return this.http.post<Usuario>(this.apiUrl, usuario);
   }
 
-  update(id: number, usuario: Usuario): Observable<Usuario> {
+  update(id: number, usuario: Usuario | any): Observable<Usuario> {
     const url = `${this.apiUrl}/${id}`;
     return this.http.put<Usuario>(url, usuario);
   }

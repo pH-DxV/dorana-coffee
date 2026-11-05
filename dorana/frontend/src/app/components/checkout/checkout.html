@@ -1,0 +1,482 @@
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
+  <!-- Estado Pós-Compra: Confirmação do Pedido & Pagamento -->
+  @if (pedidoConcluido(); as pedido) {
+    <div class="max-w-3xl mx-auto bg-white rounded-2xl p-8 sm:p-10 border border-[#d2c3be]/50 editorial-shadow space-y-8">
+      <div class="text-center space-y-3 border-b border-[#d2c3be]/30 pb-6">
+        <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto">
+          <span class="material-symbols-outlined text-4xl">check_circle</span>
+        </div>
+        <span class="text-xs font-label uppercase tracking-[0.2em] text-[#885031] font-bold block">
+          Torrefação Dorana Coffee Shop
+        </span>
+        <h1 class="font-headline text-3xl font-bold text-[#251914]">
+          Pedido #{{ pedido.id }} Confirmado com Sucesso!
+        </h1>
+        <p class="text-xs sm:text-sm text-[#4f4541]">
+          Seus microlotes entraram na fila de torra artesanal e envio.
+        </p>
+      </div>
+
+      <!-- Detalhes do Pagamento Gerado pela API -->
+      @if (pagamentoConcluido(); as pag) {
+        <div class="bg-[#fff1ec] p-6 rounded-xl border border-[#d2c3be]/50 space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="font-headline text-lg font-bold text-[#251914] flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#885031]">payments</span>
+              Comprovante &amp; Instruções de Pagamento
+            </h2>
+            <span class="px-3 py-1 rounded-full bg-emerald-700 text-white text-[11px] font-bold uppercase tracking-wider">
+              {{ pag.confirmado ? 'Pagamento Confirmado' : 'Aguardando Compensação' }}
+            </span>
+          </div>
+
+          @if (pag.chavePix) {
+            <div class="space-y-2">
+              <span class="text-xs font-bold text-[#4f4541] block">Chave PIX Copia e Cola Gerada:</span>
+              <div class="flex items-center gap-2">
+                <input
+                  type="text"
+                  readonly
+                  [value]="pag.chavePix"
+                  class="flex-1 bg-white text-xs font-mono text-[#251914] px-3 py-2.5 rounded-lg border border-[#d2c3be]"
+                />
+                <button
+                  type="button"
+                  (click)="copiarCodigo(pag.chavePix)"
+                  class="px-4 py-2.5 rounded-lg bg-[#885031] text-white text-xs font-bold">
+                  {{ copiadoSucesso() ? 'Copiado!' : 'Copiar PIX' }}
+                </button>
+              </div>
+            </div>
+          }
+
+          @if (pag.codigoBarras) {
+            <div class="space-y-2">
+              <span class="text-xs font-bold text-[#4f4541] block">Linha Digitável do Boleto Bancário:</span>
+              <div class="flex items-center gap-2">
+                <input
+                  type="text"
+                  readonly
+                  [value]="pag.codigoBarras"
+                  class="flex-1 bg-white text-xs font-mono text-[#251914] px-3 py-2.5 rounded-lg border border-[#d2c3be]"
+                />
+                <button
+                  type="button"
+                  (click)="copiarCodigo(pag.codigoBarras)"
+                  class="px-4 py-2.5 rounded-lg bg-[#885031] text-white text-xs font-bold">
+                  {{ copiadoSucesso() ? 'Copiado!' : 'Copiar Código' }}
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Resumo Financeiro do Pedido Criado -->
+      <div class="space-y-3 text-xs border-t border-[#d2c3be]/30 pt-4">
+        <div class="flex justify-between">
+          <span class="text-[#4f4541]">Status do Pedido:</span>
+          <span class="font-bold text-[#251914]">{{ pedido.status?.label || 'Pagamento Confirmado' }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-[#4f4541]">Frete:</span>
+          <span class="font-semibold text-[#251914] tabular-nums">R$ {{ (pedido.valorFrete || 0) | number:'1.2-2' }}</span>
+        </div>
+        <div class="flex justify-between text-base font-bold text-[#251914]">
+          <span>Valor Total:</span>
+          <span class="tabular-nums">R$ {{ (pedido.totalPedido || 0) | number:'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
+        <a
+          routerLink="/minha-conta"
+          class="px-6 py-3.5 rounded-xl bg-[#885031] hover:bg-[#723e21] text-white text-xs font-bold uppercase tracking-wider">
+          Acompanhar em Meus Pedidos
+        </a>
+        <a
+          routerLink="/catalogo"
+          class="px-6 py-3.5 rounded-xl border border-[#d2c3be] text-[#251914] hover:bg-[#fff1ec] text-xs font-bold uppercase tracking-wider">
+          Voltar à Loja
+        </a>
+      </div>
+    </div>
+  } @else {
+    <!-- Cabeçalho do Checkout -->
+    <div class="mb-8">
+      <nav class="text-xs text-[#807570] mb-2 flex items-center gap-2">
+        <a routerLink="/carrinho" class="hover:text-[#885031]">Sacola</a>
+        <span>/</span>
+        <span class="text-[#251914] font-semibold">Checkout Seguro &amp; Pagamento</span>
+      </nav>
+      <h1 class="font-headline text-3xl sm:text-4xl font-bold text-[#251914]">
+        Finalizar Compra
+      </h1>
+    </div>
+
+    @if (erroMensagem(); as erro) {
+      <div class="mb-6 p-4 rounded-xl bg-[#ffdad6] text-[#93000a] border border-[#ba1a1a]/30 flex items-center gap-3 text-xs font-semibold">
+        <span class="material-symbols-outlined">error</span>
+        <span>{{ erro }}</span>
+      </div>
+    }
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <!-- Coluna Principal (7 cols): Etapas 1, 2 e 3 -->
+      <div class="lg:col-span-7 space-y-6">
+        <!-- Etapa 1: Identificação do Cliente -->
+        <div class="bg-white p-6 rounded-2xl border border-[#d2c3be]/40 editorial-shadow space-y-4">
+          <div class="flex items-center justify-between border-b border-[#d2c3be]/30 pb-3">
+            <h2 class="font-headline text-xl font-bold text-[#251914] flex items-center gap-2.5">
+              <span class="w-7 h-7 rounded-full bg-[#130804] text-[#fdb38d] text-xs font-bold flex items-center justify-center">1</span>
+              <span>Identificação do Cliente</span>
+            </h2>
+            @if (authService.isAuthenticated()) {
+              <span class="text-xs font-bold text-emerald-700 flex items-center gap-1">
+                <span class="material-symbols-outlined text-base">verified</span> Autenticado
+              </span>
+            }
+          </div>
+
+          @if (usuario(); as u) {
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs bg-[#fff1ec] p-4 rounded-xl">
+              <div>
+                <span class="text-[#807570] block">Nome Completo</span>
+                <strong class="text-[#251914] text-sm">{{ u.nome }}</strong>
+              </div>
+              <div>
+                <span class="text-[#807570] block">E-mail / Login</span>
+                <strong class="text-[#251914] text-sm">{{ u.email || u.login }}</strong>
+              </div>
+              @if (u.cpf) {
+                <div>
+                  <span class="text-[#807570] block">CPF</span>
+                  <strong class="text-[#251914] tabular-nums">{{ u.cpf }}</strong>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="bg-[#fff1ec] p-5 rounded-xl border border-[#d2c3be]/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <p class="text-sm font-bold text-[#251914]">Acesse sua conta para finalizar o pedido</p>
+                <p class="text-xs text-[#4f4541]">Seus itens na sacola permanecerão salvos automaticamente.</p>
+              </div>
+              <a
+                routerLink="/login"
+                class="px-5 py-2.5 rounded-lg bg-[#885031] text-white text-xs font-bold uppercase tracking-wider shrink-0">
+                Entrar / Cadastrar
+              </a>
+            </div>
+          }
+        </div>
+
+        <!-- Etapa 2: Endereço de Entrega -->
+        <div class="bg-white p-6 rounded-2xl border border-[#d2c3be]/40 editorial-shadow space-y-4">
+          <div class="flex items-center justify-between border-b border-[#d2c3be]/30 pb-3">
+            <h2 class="font-headline text-xl font-bold text-[#251914] flex items-center gap-2.5">
+              <span class="w-7 h-7 rounded-full bg-[#130804] text-[#fdb38d] text-xs font-bold flex items-center justify-center">2</span>
+              <span>Endereço de Entrega</span>
+            </h2>
+            @if (authService.isAuthenticated()) {
+              <button
+                type="button"
+                (click)="exibirFormNovoEndereco.set(!exibirFormNovoEndereco())"
+                class="text-xs font-bold text-[#885031] hover:underline flex items-center gap-1">
+                <span class="material-symbols-outlined text-base">add_location_alt</span>
+                <span>{{ exibirFormNovoEndereco() ? 'Cancelar Novo Endereço' : 'Novo Endereço' }}</span>
+              </button>
+            }
+          </div>
+
+          @if (enderecos().length > 0) {
+            <div class="grid grid-cols-1 gap-3">
+              @for (end of enderecos(); track end.id) {
+                <label
+                  (click)="idEnderecoSelecionado.set(end.id)"
+                  [class]="idEnderecoSelecionado() === end.id
+                    ? 'p-4 rounded-xl bg-[#ffe9e2] border-2 border-[#885031] cursor-pointer flex items-start justify-between gap-3'
+                    : 'p-4 rounded-xl bg-[#fff8f6] border border-[#d2c3be]/60 cursor-pointer flex items-start justify-between gap-3 hover:bg-[#fff1ec]'">
+                  <div class="text-xs space-y-1">
+                    <span class="font-bold text-[#251914] text-sm block">
+                      {{ end.rua }}, {{ end.numero }} {{ end.complemento ? ' - ' + end.complemento : '' }}
+                    </span>
+                    <span class="text-[#4f4541] block">
+                      Bairro {{ end.bairro }} • CEP {{ end.cep }}
+                    </span>
+                    @if (end.municipio) {
+                      <span class="text-[#885031] font-semibold block">
+                        {{ end.municipio.nome }} - {{ end.municipio.estado?.sigla }}
+                      </span>
+                    }
+                  </div>
+                  <span class="material-symbols-outlined text-[#885031]">
+                    {{ idEnderecoSelecionado() === end.id ? 'radio_button_checked' : 'radio_button_unchecked' }}
+                  </span>
+                </label>
+              }
+            </div>
+          }
+
+          <!-- Formulário de Cadastro Rápido de Endereço no Checkout -->
+          @if (exibirFormNovoEndereco()) {
+            <div class="bg-[#fff1ec] p-5 rounded-xl border border-[#d2c3be]/60 space-y-4">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#251914]">
+                Cadastrar Novo Endereço de Entrega
+              </h3>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                <div>
+                  <label class="block font-semibold text-[#4f4541] mb-1">CEP *</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="novoCep"
+                    placeholder="77000-000"
+                    class="w-full bg-white rounded-lg px-3 py-2 border border-[#d2c3be]"
+                  />
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="block font-semibold text-[#4f4541] mb-1">Logradouro / Rua *</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="novaRua"
+                    placeholder="Ex: Quadra 104 Sul, Alameda 2"
+                    class="w-full bg-white rounded-lg px-3 py-2 border border-[#d2c3be]"
+                  />
+                </div>
+                <div>
+                  <label class="block font-semibold text-[#4f4541] mb-1">Número *</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="novoNumero"
+                    placeholder="120"
+                    class="w-full bg-white rounded-lg px-3 py-2 border border-[#d2c3be]"
+                  />
+                </div>
+                <div>
+                  <label class="block font-semibold text-[#4f4541] mb-1">Complemento</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="novoComplemento"
+                    placeholder="Apto / Bloco"
+                    class="w-full bg-white rounded-lg px-3 py-2 border border-[#d2c3be]"
+                  />
+                </div>
+                <div>
+                  <label class="block font-semibold text-[#4f4541] mb-1">Bairro *</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="novoBairro"
+                    placeholder="Centro"
+                    class="w-full bg-white rounded-lg px-3 py-2 border border-[#d2c3be]"
+                  />
+                </div>
+                <div class="sm:col-span-3">
+                  <label class="block font-semibold text-[#4f4541] mb-1">Município / UF *</label>
+                  <select
+                    [(ngModel)]="novoIdMunicipio"
+                    class="w-full bg-white rounded-lg px-3 py-2 border border-[#d2c3be]">
+                    @for (m of municipios(); track m.id) {
+                      <option [ngValue]="m.id">{{ m.nome }} - {{ m.estado?.sigla }}</option>
+                    }
+                  </select>
+                </div>
+              </div>
+              <div class="flex justify-end">
+                <button
+                  type="button"
+                  (click)="salvarNovoEndereco()"
+                  class="px-5 py-2.5 rounded-lg bg-[#885031] text-white text-xs font-bold">
+                  Salvar e Usar Este Endereço
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Etapa 3: Modalidade de Pagamento (PIX, Cartão, Boleto) -->
+        <div class="bg-white p-6 rounded-2xl border border-[#d2c3be]/40 editorial-shadow space-y-5">
+          <h2 class="font-headline text-xl font-bold text-[#251914] flex items-center gap-2.5 border-b border-[#d2c3be]/30 pb-3">
+            <span class="w-7 h-7 rounded-full bg-[#130804] text-[#fdb38d] text-xs font-bold flex items-center justify-center">3</span>
+            <span>Modalidade de Pagamento</span>
+          </h2>
+
+          <!-- Abas de Seleção de Pagamento -->
+          <div class="grid grid-cols-3 gap-3">
+            <button
+              type="button"
+              (click)="metodoPagamento.set('PIX')"
+              [class]="metodoPagamento() === 'PIX'
+                ? 'p-3.5 rounded-xl bg-[#130804] text-[#fdb38d] font-bold text-xs flex flex-col items-center gap-1.5 shadow'
+                : 'p-3.5 rounded-xl bg-[#fff8f6] border border-[#d2c3be] text-[#251914] font-semibold text-xs flex flex-col items-center gap-1.5 hover:bg-[#fff1ec]'">
+              <span class="material-symbols-outlined">qr_code_2</span>
+              <span>PIX Instantâneo</span>
+            </button>
+
+            <button
+              type="button"
+              (click)="metodoPagamento.set('CARTAO')"
+              [class]="metodoPagamento() === 'CARTAO'
+                ? 'p-3.5 rounded-xl bg-[#130804] text-[#fdb38d] font-bold text-xs flex flex-col items-center gap-1.5 shadow'
+                : 'p-3.5 rounded-xl bg-[#fff8f6] border border-[#d2c3be] text-[#251914] font-semibold text-xs flex flex-col items-center gap-1.5 hover:bg-[#fff1ec]'">
+              <span class="material-symbols-outlined">credit_card</span>
+              <span>Cartão de Crédito</span>
+            </button>
+
+            <button
+              type="button"
+              (click)="metodoPagamento.set('BOLETO')"
+              [class]="metodoPagamento() === 'BOLETO'
+                ? 'p-3.5 rounded-xl bg-[#130804] text-[#fdb38d] font-bold text-xs flex flex-col items-center gap-1.5 shadow'
+                : 'p-3.5 rounded-xl bg-[#fff8f6] border border-[#d2c3be] text-[#251914] font-semibold text-xs flex flex-col items-center gap-1.5 hover:bg-[#fff1ec]'">
+              <span class="material-symbols-outlined">receipt_long</span>
+              <span>Boleto Bancário</span>
+            </button>
+          </div>
+
+          <!-- Painel PIX -->
+          @if (metodoPagamento() === 'PIX') {
+            <div class="bg-[#fff1ec] p-5 rounded-xl border border-[#d2c3be]/50 flex items-start gap-4">
+              <span class="material-symbols-outlined text-3xl text-[#885031]">bolt</span>
+              <div class="text-xs space-y-1">
+                <h3 class="font-bold text-[#251914] text-sm">Aprovação Imediata para Torra</h3>
+                <p class="text-[#4f4541]">
+                  Ao confirmar o pedido, geraremos a chave PIX Copia e Cola oficial com validade de 30 minutos e confirmação instantânea.
+                </p>
+              </div>
+            </div>
+          }
+
+          <!-- Painel Cartão de Crédito -->
+          @if (metodoPagamento() === 'CARTAO') {
+            <div class="bg-[#fff1ec] p-5 rounded-xl border border-[#d2c3be]/50 space-y-4 text-xs">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="sm:col-span-2">
+                  <label class="block font-bold text-[#251914] mb-1">Nome Impresso no Cartão *</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="nomeTitular"
+                    placeholder="Ex: JOAO C SILVA"
+                    class="w-full bg-white rounded-lg px-3.5 py-2.5 border border-[#d2c3be]"
+                  />
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="block font-bold text-[#251914] mb-1">Número do Cartão (13 a 19 dígitos) *</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="numeroCartao"
+                    placeholder="5432109876543210"
+                    maxlength="19"
+                    class="w-full bg-white rounded-lg px-3.5 py-2.5 border border-[#d2c3be] tabular-nums"
+                  />
+                </div>
+                <div>
+                  <label class="block font-bold text-[#251914] mb-1">Bandeira *</label>
+                  <select
+                    [(ngModel)]="bandeira"
+                    class="w-full bg-white rounded-lg px-3.5 py-2.5 border border-[#d2c3be]">
+                    <option value="Mastercard">Mastercard</option>
+                    <option value="Visa">Visa</option>
+                    <option value="Elo">Elo</option>
+                    <option value="Amex">American Express</option>
+                  </select>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block font-bold text-[#251914] mb-1">Validade *</label>
+                    <input
+                      type="text"
+                      [(ngModel)]="validade"
+                      placeholder="12/2029"
+                      maxlength="7"
+                      class="w-full bg-white rounded-lg px-3 py-2.5 border border-[#d2c3be] tabular-nums"
+                    />
+                  </div>
+                  <div>
+                    <label class="block font-bold text-[#251914] mb-1">CVV *</label>
+                    <input
+                      type="password"
+                      [(ngModel)]="cvv"
+                      placeholder="123"
+                      maxlength="4"
+                      class="w-full bg-white rounded-lg px-3 py-2.5 border border-[#d2c3be] tabular-nums"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Painel Boleto Bancário -->
+          @if (metodoPagamento() === 'BOLETO') {
+            <div class="bg-[#fff1ec] p-5 rounded-xl border border-[#d2c3be]/50 flex items-start gap-4">
+              <span class="material-symbols-outlined text-3xl text-[#885031]">barcode</span>
+              <div class="text-xs space-y-1">
+                <h3 class="font-bold text-[#251914] text-sm">Boleto Registrado com Vencimento em 3 Dias</h3>
+                <p class="text-[#4f4541]">
+                  O código de barras será exibido imediatamente na próxima tela para pagamento no seu aplicativo bancário.
+                </p>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Coluna Lateral Direita (5 cols): Resumo Fixo do Pedido -->
+      <aside class="lg:col-span-5 bg-white p-6 rounded-2xl border border-[#d2c3be]/40 editorial-shadow space-y-6 sticky top-28">
+        <h2 class="font-headline text-xl font-bold text-[#251914] border-b border-[#d2c3be]/30 pb-3">
+          Resumo dos Microlotes ({{ cartService.totalCount() }})
+        </h2>
+
+        <div class="space-y-3 max-h-72 overflow-y-auto custom-scrollbar pr-1">
+          @for (item of cartService.items(); track item.cafe.id + '-' + item.moagem; let idx = $index) {
+            <div class="flex items-center justify-between gap-3 text-xs pb-3 border-b border-[#d2c3be]/20">
+              <div class="flex items-center gap-3 min-w-0">
+                <img
+                  [src]="obterImagem(item.cafe, idx)"
+                  [alt]="item.cafe.nome"
+                  class="w-12 h-12 rounded-lg object-cover shrink-0 bg-[#fff1ec]"
+                />
+                <div class="min-w-0">
+                  <p class="font-bold text-[#251914] truncate">{{ item.cafe.nome }}</p>
+                  <p class="text-[11px] text-[#807570]">{{ item.quantidade }}x • {{ item.moagemLabel }}</p>
+                </div>
+              </div>
+              <span class="font-bold text-[#251914] tabular-nums shrink-0">
+                R$ {{ ((item.cafe.preco || 0) * item.quantidade) | number:'1.2-2' }}
+              </span>
+            </div>
+          }
+        </div>
+
+        <div class="space-y-2.5 text-xs pt-2">
+          <div class="flex justify-between text-[#4f4541]">
+            <span>Subtotal dos Cafés</span>
+            <span class="font-semibold text-[#251914] tabular-nums">R$ {{ cartService.subtotal() | number:'1.2-2' }}</span>
+          </div>
+          <div class="flex justify-between text-[#4f4541]">
+            <span>Frete</span>
+            @if (cartService.frete() === 0) {
+              <span class="font-bold text-emerald-700">Grátis</span>
+            } @else {
+              <span class="font-semibold text-[#251914] tabular-nums">R$ {{ cartService.frete() | number:'1.2-2' }}</span>
+            }
+          </div>
+          <div class="border-t border-[#d2c3be]/40 pt-3 flex justify-between items-baseline">
+            <span class="text-sm font-bold text-[#251914]">Total a Pagar</span>
+            <span class="text-2xl font-bold text-[#251914] tabular-nums">
+              R$ {{ cartService.total() | number:'1.2-2' }}
+            </span>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          (click)="finalizarPedido()"
+          [disabled]="processando() || cartService.items().length === 0"
+          class="w-full py-4 px-6 rounded-xl bg-[#885031] hover:bg-[#723e21] disabled:bg-[#d2c3be] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-all">
+          <span class="material-symbols-outlined text-lg">verified_user</span>
+          <span>{{ processando() ? 'Processando Pedido...' : 'Confirmar Pedido & Pagar' }}</span>
+        </button>
+      </aside>
+    </div>
+  }
+</section>

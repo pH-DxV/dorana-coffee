@@ -1,227 +1,158 @@
-<mat-toolbar class="mat-toolbar">
+<section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
+  <!-- Cabeçalho do Formulário Técnico de Café (Stitch Screen 9) -->
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#d2c3be]/40 pb-5">
+    <div>
+      <span class="text-xs font-label uppercase tracking-[0.2em] text-[#885031] font-bold">
+        Ficha Técnica &amp; Curadoria Sensorial
+      </span>
+      <h1 class="font-headline text-3xl font-bold text-[#251914] mt-1">
+        {{ isEdit ? 'Editar Microlote de Café' : 'Cadastrar Novo Microlote' }}
+      </h1>
+    </div>
+    <a
+      routerLink="/cafes"
+      class="text-xs font-bold text-[#885031] hover:underline flex items-center gap-1">
+      <span class="material-symbols-outlined text-base">arrow_back</span>
+      <span>Voltar à Listagem</span>
+    </a>
+  </div>
 
-    <span class="toolbar-title">
-        {{ isEdit ? 'Editar Café' : 'Novo Café' }}
-    </span>
+  <form [formGroup]="form" (ngSubmit)="salvar()" class="space-y-6">
+    <!-- Card 1: Identificação e Vínculos de Marca / Categoria -->
+    <div class="bg-white p-6 sm:p-8 rounded-2xl border border-[#d2c3be]/40 editorial-shadow space-y-5">
+      <h2 class="font-headline text-xl font-bold text-[#251914] border-b border-[#d2c3be]/30 pb-3">
+        1. Identificação, Marca &amp; Categoria
+      </h2>
 
-</mat-toolbar>
-
-
-<mat-card>
-
-    <form
-        [formGroup]="form"
-        (ngSubmit)="salvar()">
-
-
-        <mat-form-field appearance="outline">
-
-            <mat-label>Nome</mat-label>
-
-            <input
-                matInput
-                formControlName="nome">
-
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <mat-form-field appearance="outline" class="sm:col-span-2 w-full">
+          <mat-label>Nome Oficial do Café / Microlote</mat-label>
+          <input matInput formControlName="nome" placeholder="Ex: Bourbon Amarelo Reserva Especial" />
         </mat-form-field>
 
-
-        <mat-form-field appearance="outline">
-
-            <mat-label>Descrição</mat-label>
-
-            <textarea
-                matInput
-                formControlName="descricao">
-            </textarea>
-
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Marca / Torrefação</mat-label>
+          <mat-select formControlName="idMarca">
+            @for (marca of marcas; track marca.id) {
+              <mat-option [value]="marca.id">{{ marca.nome }}</mat-option>
+            }
+          </mat-select>
         </mat-form-field>
 
-
-        <mat-form-field appearance="outline">
-
-            <mat-label>Marca</mat-label>
-
-            <mat-select formControlName="idMarca">
-
-                @for (marca of marcas; track marca.id) {
-
-                    <mat-option [value]="marca.id">
-                        {{ marca.nome }}
-                    </mat-option>
-
-                }
-
-            </mat-select>
-
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Categoria do Café</mat-label>
+          <mat-select formControlName="idCategoriaDoCafe">
+            @for (categoria of categorias; track categoria.id) {
+              <mat-option [value]="categoria.id">{{ categoria.nome }}</mat-option>
+            }
+          </mat-select>
         </mat-form-field>
 
+        <mat-form-field appearance="outline" class="sm:col-span-2 w-full">
+          <mat-label>Descrição Sensorial &amp; História do Lote</mat-label>
+          <textarea
+            matInput
+            rows="3"
+            formControlName="descricao"
+            placeholder="Descreva notas em xícara, altitude, doçura e método de preparo recomendado...">
+          </textarea>
+        </mat-form-field>
+      </div>
+    </div>
 
-        <mat-form-field appearance="outline">
+    <!-- Card 2: Perfil de Torra, Tratamento, Pontuação SCA e Notas Sensoriais -->
+    <div class="bg-white p-6 sm:p-8 rounded-2xl border border-[#d2c3be]/40 editorial-shadow space-y-5">
+      <h2 class="font-headline text-xl font-bold text-[#251914] border-b border-[#d2c3be]/30 pb-3">
+        2. Perfil de Torra, Pós-Colheita &amp; Notas Sensoriais
+      </h2>
 
-            <mat-label>Categoria</mat-label>
-
-            <mat-select formControlName="idCategoriaDoCafe">
-
-                @for (categoria of categorias; track categoria.id) {
-
-                    <mat-option [value]="categoria.id">
-                        {{ categoria.nome }}
-                    </mat-option>
-
-                }
-
-            </mat-select>
-
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Nível de Torra</mat-label>
+          <mat-select formControlName="idNivelDeTorra">
+            @for (torra of niveisTorra; track torra.id) {
+              <mat-option [value]="torra.id">{{ torra.nome }}</mat-option>
+            }
+          </mat-select>
         </mat-form-field>
 
-
-        <mat-form-field appearance="outline">
-
-            <mat-label>Nível de Torra</mat-label>
-
-            <mat-select formControlName="idNivelDeTorra">
-
-                <mat-option [value]="1">
-                    Clara
-                </mat-option>
-
-                <mat-option [value]="2">
-                    Média-Clara
-                </mat-option>
-
-                <mat-option [value]="3">
-                    Média
-                </mat-option>
-
-                <mat-option [value]="4">
-                    Média-Escura
-                </mat-option>
-
-                <mat-option [value]="5">
-                    Escura
-                </mat-option>
-
-            </mat-select>
-
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Método de Tratamento</mat-label>
+          <mat-select formControlName="idTratamento">
+            @for (trat of tratamentos; track trat.id) {
+              <mat-option [value]="trat.id">{{ trat.nome }}</mat-option>
+            }
+          </mat-select>
         </mat-form-field>
 
-
-        <mat-form-field appearance="outline">
-
-            <mat-label>Tratamento</mat-label>
-
-            <mat-select formControlName="idTratamento">
-
-                <mat-option [value]="1">
-                    Natural (Seco)
-                </mat-option>
-
-                <mat-option [value]="2">
-                    Lavado (Wet Process)
-                </mat-option>
-
-                <mat-option [value]="3">
-                    Honey (Mucilage Process)
-                </mat-option>
-
-                <mat-option [value]="4">
-                    Semi-Lavado
-                </mat-option>
-
-                <mat-option [value]="5">
-                    Descascado Natural
-                </mat-option>
-
-                <mat-option [value]="6">
-                    Anaeróbico
-                </mat-option>
-
-                <mat-option [value]="7">
-                    Fermentação Controlada (Aeróbica)
-                </mat-option>
-
-                <mat-option [value]="8">
-                    Experimental / Híbrido
-                </mat-option>
-
-            </mat-select>
-
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Pontuação SCA (80–100)</mat-label>
+          <input matInput type="number" step="0.5" formControlName="pontuacaoSCA" />
         </mat-form-field>
+      </div>
 
-
-        <mat-form-field appearance="outline">
-
-            <mat-label>Pontuação SCA</mat-label>
-
-            <input
-                matInput
-                type="number"
-                formControlName="pontuacaoSCA">
-
-        </mat-form-field>
-
-
-        <mat-form-field appearance="outline">
-
-            <mat-label>Preço</mat-label>
-
-            <input
-                matInput
-                type="number"
-                step="0.01"
-                formControlName="preco">
-
-        </mat-form-field>
-
-
-        <mat-form-field appearance="outline">
-
-            <mat-label>Peso (g)</mat-label>
-
-            <input
-                matInput
-                type="number"
-                step="0.01"
-                formControlName="peso">
-
-        </mat-form-field>
-
-
-        <mat-form-field appearance="outline">
-
-            <mat-label>Estoque</mat-label>
-
-            <input
-                matInput
-                type="number"
-                formControlName="estoque">
-
-        </mat-form-field>
-
-
-        <div class="botoes">
-
+      <!-- Chips Interativos de Notas Sensoriais -->
+      <div class="space-y-2 pt-2">
+        <label class="block text-xs font-bold uppercase tracking-wider text-[#251914]">
+          Notas Sensoriais do Lote (selecione uma ou mais):
+        </label>
+        <div class="flex flex-wrap gap-2">
+          @for (nota of notasSensoriaisOpcoes; track nota.id) {
             <button
-                mat-raised-button
-                type="button"
-                (click)="cancelar()">
-
-                Cancelar
-
+              type="button"
+              (click)="alternarNotaSensorial(nota.id)"
+              [class]="notaSelecionada(nota.id)
+                ? 'px-3.5 py-1.5 rounded-full bg-[#885031] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm'
+                : 'px-3.5 py-1.5 rounded-full bg-[#fff1ec] hover:bg-[#ffe9e2] text-[#251914] border border-[#d2c3be] text-xs font-medium flex items-center gap-1.5'">
+              <span class="material-symbols-outlined text-sm">
+                {{ notaSelecionada(nota.id) ? 'check_circle' : 'add_circle' }}
+              </span>
+              <span>{{ nota.nome }}</span>
             </button>
-
-
-            <button
-                mat-raised-button
-                color="primary"
-                type="submit">
-
-                Salvar
-
-            </button>
-
+          }
         </div>
+      </div>
+    </div>
 
-    </form>
+    <!-- Card 3: Precificação, Peso e Saldo em Estoque -->
+    <div class="bg-white p-6 sm:p-8 rounded-2xl border border-[#d2c3be]/40 editorial-shadow space-y-5">
+      <h2 class="font-headline text-xl font-bold text-[#251914] border-b border-[#d2c3be]/30 pb-3">
+        3. Precificação, Peso &amp; Saldo de Estoque
+      </h2>
 
-</mat-card>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Preço de Venda (R$)</mat-label>
+          <input matInput type="number" step="0.01" formControlName="preco" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Peso da Embalagem (g)</mat-label>
+          <input matInput type="number" step="1" formControlName="peso" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Saldo Inicial em Estoque (un.)</mat-label>
+          <input matInput type="number" formControlName="estoque" />
+        </mat-form-field>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-4 border-t border-[#d2c3be]/30">
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="cancelar()">
+          Cancelar
+        </button>
+
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          class="!bg-[#885031] !text-white !px-6 !py-2">
+          Salvar Microlote
+        </button>
+      </div>
+    </div>
+  </form>
+</section>

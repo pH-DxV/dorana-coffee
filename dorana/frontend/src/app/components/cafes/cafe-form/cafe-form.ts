@@ -1,17 +1,23 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { CafeService } from '../../../services/cafe.service';
 import { MarcaService } from '../../../services/marca.service';
 import { CategoriaDoCafeService } from '../../../services/categoria-do-cafe.service';
 
-import { Cafe } from '../../../models/cafe.model';
+import {
+  Cafe,
+  NIVEIS_DE_TORRA_OPCOES,
+  NOTAS_SENSORIAIS_OPCOES,
+  TRATAMENTOS_OPCOES
+} from '../../../models/cafe.model';
 import { Marca } from '../../../models/marca.model';
 import { CategoriaDoCafe } from '../../../models/categoria-do-cafe.model';
 
@@ -28,13 +34,13 @@ import { MatSelectModule } from '@angular/material/select';
   templateUrl: './cafe-form.html',
   styleUrl: './cafe-form.css',
   imports: [
+    CommonModule,
     ReactiveFormsModule,
-
+    RouterLink,
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
     MatCardModule,
-
     MatInputModule,
     MatFormFieldModule,
     MatSelectModule
@@ -46,6 +52,10 @@ export class CafeFormComponent implements OnInit {
 
   marcas: Marca[] = [];
   categorias: CategoriaDoCafe[] = [];
+
+  readonly niveisTorra = NIVEIS_DE_TORRA_OPCOES;
+  readonly tratamentos = TRATAMENTOS_OPCOES;
+  readonly notasSensoriaisOpcoes = NOTAS_SENSORIAIS_OPCOES;
 
   isEdit = false;
 
@@ -59,48 +69,38 @@ export class CafeFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-
     this.form = this.fb.group({
-
       nome: [
         '',
         [Validators.required, Validators.maxLength(100)]
       ],
-
       descricao: [
         '',
         [Validators.maxLength(500)]
       ],
-
       idMarca: [
         null,
         Validators.required
       ],
-
       idCategoriaDoCafe: [
         null,
         Validators.required
       ],
-
       idNivelDeTorra: [
-        null,
+        2,
         Validators.required
       ],
-
       idTratamento: [
-        null,
+        1,
         Validators.required
       ],
-
       notasSensoriais: [
         []
       ],
-
       pontuacaoSCA: [
-        null,
+        86,
         Validators.min(0)
       ],
-
       preco: [
         null,
         [
@@ -108,23 +108,20 @@ export class CafeFormComponent implements OnInit {
           Validators.min(0)
         ]
       ],
-
       peso: [
-        null,
+        250,
         [
           Validators.required,
           Validators.min(0)
         ]
       ],
-
       estoque: [
-        0,
+        10,
         [
           Validators.required,
           Validators.min(0)
         ]
       ]
-
     });
 
     this.carregarMarcas();
@@ -135,29 +132,27 @@ export class CafeFormComponent implements OnInit {
     if (cafe) {
       this.isEdit = true;
 
+      const notasIniciais = (cafe.notasSensoriais ?? []).map((n: any) =>
+        typeof n === 'object' && n?.id ? { id: n.id } : n
+      );
+
       this.form.patchValue({
         nome: cafe.nome,
         descricao: cafe.descricao,
-
         idMarca: cafe.marca?.id,
         idCategoriaDoCafe: cafe.categoriaDoCafe?.id,
-
-        idNivelDeTorra: cafe.nivelDeTorra?.id,
-        idTratamento: cafe.tratamento?.id,
-
-        notasSensoriais: cafe.notasSensoriais ?? [],
-
+        idNivelDeTorra: cafe.nivelDeTorra?.id ?? 2,
+        idTratamento: cafe.tratamento?.id ?? 1,
+        notasSensoriais: notasIniciais,
         pontuacaoSCA: cafe.pontuacaoSCA,
         preco: cafe.preco,
         peso: cafe.peso,
-
         estoque: cafe.estoque
       });
     }
   }
 
   carregarMarcas(): void {
-
     this.marcaService.findAll().subscribe({
       next: (marcas: Marca[]) => {
         this.marcas = marcas;
@@ -166,11 +161,9 @@ export class CafeFormComponent implements OnInit {
         console.error('Erro ao carregar marcas:', error);
       }
     });
-
   }
 
   carregarCategorias(): void {
-
     this.categoriaService.findAll().subscribe({
       next: (categorias: CategoriaDoCafe[]) => {
         this.categorias = categorias;
@@ -179,11 +172,27 @@ export class CafeFormComponent implements OnInit {
         console.error('Erro ao carregar categorias:', error);
       }
     });
+  }
 
+  notaSelecionada(idNota: number): boolean {
+    const lista: any[] = this.form?.get('notasSensoriais')?.value || [];
+    return lista.some(item => (typeof item === 'object' ? item?.id === idNota : item === idNota));
+  }
+
+  alternarNotaSensorial(idNota: number): void {
+    const atual: any[] = [...(this.form.get('notasSensoriais')?.value || [])];
+    const idx = atual.findIndex(item =>
+      typeof item === 'object' ? item?.id === idNota : item === idNota
+    );
+    if (idx >= 0) {
+      atual.splice(idx, 1);
+    } else {
+      atual.push({ id: idNota });
+    }
+    this.form.patchValue({ notasSensoriais: atual });
   }
 
   salvar(): void {
-
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -194,7 +203,6 @@ export class CafeFormComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
 
     if (id) {
-
       this.cafeService.update(
         Number(id),
         cafe
@@ -206,9 +214,7 @@ export class CafeFormComponent implements OnInit {
           console.error('Erro ao atualizar café:', error);
         }
       });
-
     } else {
-
       this.cafeService.create(cafe).subscribe({
         next: () => {
           this.router.navigate(['/cafes']);
@@ -217,7 +223,6 @@ export class CafeFormComponent implements OnInit {
           console.error('Erro ao cadastrar café:', error);
         }
       });
-
     }
   }
 
@@ -225,4 +230,3 @@ export class CafeFormComponent implements OnInit {
     this.router.navigate(['/cafes']);
   }
 }
-

@@ -1,5 +1,14 @@
 import { Routes } from '@angular/router';
 
+import { HomeComponent } from './components/home/home';
+import { CatalogoComponent } from './components/catalogo/catalogo';
+import { ProdutoDetalheComponent } from './components/produto-detalhe/produto-detalhe';
+import { CarrinhoComponent } from './components/carrinho/carrinho';
+import { CheckoutComponent } from './components/checkout/checkout';
+import { MinhaContaComponent } from './components/minha-conta/minha-conta';
+import { AdminDashboardComponent } from './components/admin/dashboard/admin-dashboard';
+import { EstoqueListComponent } from './components/estoque/estoque-list';
+
 import { LoginComponent } from './components/auth/login/login';
 
 import { EstadoListComponent } from './components/estados/estado-list/estado-list';
@@ -27,34 +36,75 @@ import { CategoriaFormComponent } from './components/categorias/categoria-form/c
 import { categoriaDoCafeResolver } from './resolvers/categoria-do-cafe-resolver';
 
 export const routes: Routes = [
-
-  // AUTH
+  // VITRINE E-COMMERCE DORANA COFFEE SHOP
   {
     path: '',
-    redirectTo: '/cafes',
+    component: HomeComponent,
+    title: 'Dorana Coffee Shop | Cafés Especiais & Torrefação Artesanal'
+  },
+  {
+    path: 'home',
+    redirectTo: '',
     pathMatch: 'full'
+  },
+  {
+    path: 'catalogo',
+    component: CatalogoComponent,
+    title: 'Catálogo de Grãos | Dorana Coffee Shop'
+  },
+  {
+    path: 'produto/:id',
+    component: ProdutoDetalheComponent,
+    title: 'Detalhes do Microlote | Dorana Coffee Shop'
+  },
+  {
+    path: 'carrinho',
+    component: CarrinhoComponent,
+    title: 'Sacola de Compras | Dorana Coffee Shop'
+  },
+  {
+    path: 'checkout',
+    component: CheckoutComponent,
+    title: 'Checkout & Pagamento | Dorana Coffee Shop'
+  },
+  {
+    path: 'minha-conta',
+    component: MinhaContaComponent,
+    title: 'Minha Conta | Dorana Coffee Shop'
   },
   {
     path: 'login',
     component: LoginComponent,
-    title: 'Login - CoffeeHouse'
+    title: 'Autenticação & Cadastro | Dorana Coffee Shop'
+  },
+
+  // BACKOFFICE & PAINEL ADMINISTRATIVO DORANA COFFEE SHOP
+  {
+    path: 'admin',
+    component: AdminDashboardComponent,
+    title: 'Painel Administrativo | Dorana Coffee Shop'
+  },
+  {
+    path: 'estoque',
+    component: EstoqueListComponent,
+    title: 'Controle de Estoque | Dorana Coffee Shop'
   },
 
   // ROUTES DE USUARIOS
   {
     path: 'usuarios',
     component: UsuarioListComponent,
-    title: 'Lista de Usuários'
+    title: 'Gestão de Usuários | Dorana Coffee Shop'
   },
   {
     path: 'usuarios/new',
     component: UsuarioFormComponent,
-    title: 'Novo Usuário'
+    title: 'Novo Usuário | Dorana Coffee Shop'
   },
   {
     path: 'usuarios/edit/:id',
     component: UsuarioFormComponent,
-    title: 'Editar Usuário',
+    title: 'Editar Usuário | Dorana Coffee Shop',
     resolve: {
       usuario: usuarioResolver
     }
@@ -64,17 +114,17 @@ export const routes: Routes = [
   {
     path: 'estados',
     component: EstadoListComponent,
-    title: 'Lista de Estados'
+    title: 'Gestão de Estados | Dorana Coffee Shop'
   },
   {
     path: 'estados/new',
     component: EstadoFormComponent,
-    title: 'Novo Estado'
+    title: 'Novo Estado | Dorana Coffee Shop'
   },
   {
     path: 'estados/edit/:id',
     component: EstadoFormComponent,
-    title: 'Editar Estado',
+    title: 'Editar Estado | Dorana Coffee Shop',
     resolve: {
       estado: estadoResolver
     }
@@ -84,17 +134,17 @@ export const routes: Routes = [
   {
     path: 'municipios',
     component: MunicipioListComponent,
-    title: 'Lista de Municípios'
+    title: 'Gestão de Municípios | Dorana Coffee Shop'
   },
   {
     path: 'municipios/new',
     component: MunicipioFormComponent,
-    title: 'Novo Município'
+    title: 'Novo Município | Dorana Coffee Shop'
   },
   {
     path: 'municipios/edit/:id',
     component: MunicipioFormComponent,
-    title: 'Editar Município',
+    title: 'Editar Município | Dorana Coffee Shop',
     resolve: {
       municipio: municipioResolver
     }
@@ -104,17 +154,17 @@ export const routes: Routes = [
   {
     path: 'cafes',
     component: CafeListComponent,
-    title: 'Lista de Cafés'
+    title: 'Gestão de Cafés | Dorana Coffee Shop'
   },
   {
     path: 'cafes/new',
     component: CafeFormComponent,
-    title: 'Novo Café'
+    title: 'Novo Café | Dorana Coffee Shop'
   },
   {
     path: 'cafes/edit/:id',
     component: CafeFormComponent,
-    title: 'Editar Café',
+    title: 'Editar Café | Dorana Coffee Shop',
     resolve: {
       cafe: cafeResolver
     }
@@ -124,17 +174,17 @@ export const routes: Routes = [
   {
     path: 'marcas',
     component: MarcaListComponent,
-    title: 'Lista de Marcas'
+    title: 'Gestão de Marcas | Dorana Coffee Shop'
   },
   {
     path: 'marcas/new',
     component: MarcaFormComponent,
-    title: 'Nova Marca'
+    title: 'Nova Marca | Dorana Coffee Shop'
   },
   {
     path: 'marcas/edit/:id',
     component: MarcaFormComponent,
-    title: 'Editar Marca',
+    title: 'Editar Marca | Dorana Coffee Shop',
     resolve: {
       marca: marcaResolver
     }
@@ -144,20 +194,25 @@ export const routes: Routes = [
   {
     path: 'categorias',
     component: CategoriaListComponent,
-    title: 'Lista de Categorias'
+    title: 'Gestão de Categorias | Dorana Coffee Shop'
   },
   {
     path: 'categorias/new',
     component: CategoriaFormComponent,
-    title: 'Nova Categoria'
+    title: 'Nova Categoria | Dorana Coffee Shop'
   },
   {
     path: 'categorias/edit/:id',
     component: CategoriaFormComponent,
-    title: 'Editar Categoria',
+    title: 'Editar Categoria | Dorana Coffee Shop',
     resolve: {
       categoria: categoriaDoCafeResolver
     }
-  }
+  },
 
+  // FALLBACK
+  {
+    path: '**',
+    redirectTo: ''
+  }
 ];

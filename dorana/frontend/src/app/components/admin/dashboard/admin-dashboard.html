@@ -1,0 +1,233 @@
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+  <!-- Cabeçalho do Painel Administrativo -->
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#d2c3be]/40 pb-6">
+    <div>
+      <span class="text-xs font-label uppercase tracking-[0.2em] text-[#885031] font-bold">
+        Backoffice Operacional • Dorana Coffee Shop
+      </span>
+      <h1 class="font-headline text-3xl sm:text-4xl font-bold text-[#251914] mt-1">
+        Painel Administrativo &amp; Torrefação
+      </h1>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3">
+      <a
+        routerLink="/cafes/new"
+        class="px-4 py-2.5 rounded-xl bg-[#885031] hover:bg-[#723e21] text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm">
+        <span class="material-symbols-outlined text-base">add_circle</span>
+        <span>Novo Microlote</span>
+      </a>
+      <a
+        routerLink="/estoque"
+        class="px-4 py-2.5 rounded-xl bg-[#130804] hover:bg-[#261912] text-[#fdb38d] text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+        <span class="material-symbols-outlined text-base">inventory_2</span>
+        <span>Controle de Estoque</span>
+      </a>
+    </div>
+  </div>
+
+  @if (feedbackMsg(); as msg) {
+    <div class="p-4 rounded-xl bg-emerald-100 text-emerald-900 border border-emerald-500/30 flex items-center gap-2 text-xs font-semibold">
+      <span class="material-symbols-outlined text-base">check_circle</span>
+      <span>{{ msg }}</span>
+    </div>
+  }
+
+  <!-- 4 KPI Cards Principais (Fidelidade ao Stitch Screen 8) -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="bg-white p-6 rounded-2xl border border-[#d2c3be]/40 editorial-shadow space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] uppercase tracking-wider text-[#807570] font-bold">Receita de Pedidos</span>
+        <span class="w-9 h-9 rounded-lg bg-[#ffe9e2] text-[#885031] flex items-center justify-center">
+          <span class="material-symbols-outlined text-lg">payments</span>
+        </span>
+      </div>
+      <p class="text-2xl font-bold text-[#251914] tabular-nums">
+        R$ {{ receitaTotal() | number:'1.2-2' }}
+      </p>
+      <span class="text-[11px] text-emerald-700 font-semibold block">
+        Pedidos confirmados na plataforma
+      </span>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl border border-[#d2c3be]/40 editorial-shadow space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] uppercase tracking-wider text-[#807570] font-bold">Pedidos Registrados</span>
+        <span class="w-9 h-9 rounded-lg bg-[#ffe9e2] text-[#885031] flex items-center justify-center">
+          <span class="material-symbols-outlined text-lg">shopping_bag</span>
+        </span>
+      </div>
+      <p class="text-2xl font-bold text-[#251914] tabular-nums">
+        {{ pedidos().length }}
+      </p>
+      <span class="text-[11px] text-[#4f4541] block">
+        Monitoramento em tempo real
+      </span>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl border border-[#d2c3be]/40 editorial-shadow space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] uppercase tracking-wider text-[#807570] font-bold">Microlotes no Catálogo</span>
+        <span class="w-9 h-9 rounded-lg bg-[#130804] text-[#fdb38d] flex items-center justify-center">
+          <span class="material-symbols-outlined text-lg">coffee</span>
+        </span>
+      </div>
+      <p class="text-2xl font-bold text-[#251914] tabular-nums">
+        {{ cafes().length }}
+      </p>
+      <span class="text-[11px] text-[#885031] font-semibold block tabular-nums">
+        Média Sensorial: {{ mediaScaCatalogo() | number:'1.1-1' }} pts SCA
+      </span>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl border border-[#d2c3be]/40 editorial-shadow space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] uppercase tracking-wider text-[#807570] font-bold">Estoque &amp; Alertas</span>
+        <span class="w-9 h-9 rounded-lg bg-[#ffdad6] text-[#93000a] flex items-center justify-center">
+          <span class="material-symbols-outlined text-lg">warning</span>
+        </span>
+      </div>
+      <p class="text-2xl font-bold text-[#251914] tabular-nums">
+        {{ totalUnidadesEstoque() }} <span class="text-xs font-normal text-[#807570]">pacotes</span>
+      </p>
+      <span class="text-[11px] text-[#ba1a1a] font-semibold block tabular-nums">
+        {{ cafesEstoqueCritico().length }} lote(s) em nível crítico
+      </span>
+    </div>
+  </div>
+
+  <!-- Grid Principal: Tabela de Pedidos Recentes (7 cols) + Alertas de Estoque (5 cols) -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <!-- Pedidos Recentes -->
+    <div class="lg:col-span-7 bg-white rounded-2xl border border-[#d2c3be]/40 editorial-shadow overflow-hidden">
+      <div class="p-6 border-b border-[#d2c3be]/30 flex items-center justify-between">
+        <div>
+          <h2 class="font-headline text-xl font-bold text-[#251914]">Últimos Pedidos Recebidos</h2>
+          <p class="text-xs text-[#4f4541]">Integração direta com `GET /pedidos`</p>
+        </div>
+        <button
+          type="button"
+          (click)="carregarIndicadores()"
+          class="text-xs font-bold text-[#885031] hover:underline flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">refresh</span> Atualizar
+        </button>
+      </div>
+
+      @if (pedidos().length === 0) {
+        <div class="p-10 text-center text-xs text-[#4f4541]">
+          Nenhum pedido registrado até o momento ou autentique-se com perfil Administrador.
+        </div>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-[#fff1ec] text-[#4f4541] uppercase tracking-wider text-[10px]">
+              <tr>
+                <th class="py-3.5 px-4">Pedido</th>
+                <th class="py-3.5 px-4">Cliente</th>
+                <th class="py-3.5 px-4">Total</th>
+                <th class="py-3.5 px-4">Status</th>
+                <th class="py-3.5 px-4 text-right">Ação</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#d2c3be]/30">
+              @for (p of pedidos().slice(0, 8); track p.id) {
+                <tr class="hover:bg-[#fff8f6]">
+                  <td class="py-3.5 px-4 font-bold text-[#251914] tabular-nums">#{{ p.id }}</td>
+                  <td class="py-3.5 px-4 text-[#251914]">{{ p.usuario?.nome || p.usuario?.login || 'Cliente' }}</td>
+                  <td class="py-3.5 px-4 font-bold text-[#251914] tabular-nums">
+                    R$ {{ (p.totalPedido || 0) | number:'1.2-2' }}
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span
+                      [class]="p.status?.id === 6
+                        ? 'px-2.5 py-0.5 rounded-full bg-[#ffdad6] text-[#93000a] text-[10px] font-bold'
+                        : 'px-2.5 py-0.5 rounded-full bg-[#ffe9e2] text-[#723e21] text-[10px] font-bold'">
+                      {{ p.status?.label || 'Confirmado' }}
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    @if (p.status?.id === 1 || p.status?.id === 2) {
+                      <button
+                        type="button"
+                        (click)="cancelarPedidoAdmin(p.id)"
+                        class="text-[#ba1a1a] hover:underline font-bold text-[11px]">
+                        Cancelar
+                      </button>
+                    } @else {
+                      <span class="text-[#807570]">—</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+
+    <!-- Monitoramento de Estoque & Atalhos de Módulos -->
+    <div class="lg:col-span-5 space-y-6">
+      <div class="bg-white p-6 rounded-2xl border border-[#d2c3be]/40 editorial-shadow space-y-4">
+        <div class="flex items-center justify-between border-b border-[#d2c3be]/30 pb-3">
+          <h2 class="font-headline text-xl font-bold text-[#251914]">Saldo de Microlotes</h2>
+          <a routerLink="/estoque" class="text-xs font-bold text-[#885031] hover:underline">Gerenciar Estoque</a>
+        </div>
+
+        <div class="space-y-3">
+          @for (c of cafes().slice(0, 5); track c.id; let idx = $index) {
+            <div class="flex items-center justify-between gap-3 p-3 rounded-xl bg-[#fff8f6] border border-[#d2c3be]/30">
+              <div class="flex items-center gap-3 min-w-0">
+                <img
+                  [src]="obterImagem(c, idx)"
+                  [alt]="c.nome"
+                  class="w-10 h-10 rounded-lg object-cover shrink-0"
+                />
+                <div class="min-w-0">
+                  <p class="text-xs font-bold text-[#251914] truncate">{{ c.nome }}</p>
+                  <p class="text-[10px] text-[#807570]">{{ c.marca?.nome }} • SCA {{ c.pontuacaoSCA || 85 }}</p>
+                </div>
+              </div>
+              <span
+                [class]="(c.estoque ?? 0) <= 5
+                  ? 'px-2.5 py-1 rounded-lg bg-[#ffdad6] text-[#93000a] text-xs font-bold tabular-nums shrink-0'
+                  : 'px-2.5 py-1 rounded-lg bg-[#ffe9e2] text-[#723e21] text-xs font-bold tabular-nums shrink-0'">
+                {{ c.estoque ?? 0 }} un.
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Módulos de Gestão do Sistema -->
+      <div class="bg-[#fff1ec] p-6 rounded-2xl border border-[#d2c3be]/40 space-y-4">
+        <h3 class="font-headline text-lg font-bold text-[#251914]">Módulos de Cadastro &amp; Catálogo</h3>
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <a routerLink="/cafes" class="p-3.5 rounded-xl bg-white hover:bg-[#ffe9e2] border border-[#d2c3be]/40 font-bold text-[#251914] flex items-center justify-between">
+            <span>Cafés ({{ cafes().length }})</span>
+            <span class="material-symbols-outlined text-[#885031] text-base">coffee</span>
+          </a>
+          <a routerLink="/marcas" class="p-3.5 rounded-xl bg-white hover:bg-[#ffe9e2] border border-[#d2c3be]/40 font-bold text-[#251914] flex items-center justify-between">
+            <span>Marcas ({{ totalMarcas() }})</span>
+            <span class="material-symbols-outlined text-[#885031] text-base">verified</span>
+          </a>
+          <a routerLink="/categorias" class="p-3.5 rounded-xl bg-white hover:bg-[#ffe9e2] border border-[#d2c3be]/40 font-bold text-[#251914] flex items-center justify-between">
+            <span>Categorias ({{ totalCategorias() }})</span>
+            <span class="material-symbols-outlined text-[#885031] text-base">category</span>
+          </a>
+          <a routerLink="/usuarios" class="p-3.5 rounded-xl bg-white hover:bg-[#ffe9e2] border border-[#d2c3be]/40 font-bold text-[#251914] flex items-center justify-between">
+            <span>Usuários ({{ totalUsuarios() }})</span>
+            <span class="material-symbols-outlined text-[#885031] text-base">group</span>
+          </a>
+          <a routerLink="/estados" class="p-3.5 rounded-xl bg-white hover:bg-[#ffe9e2] border border-[#d2c3be]/40 font-bold text-[#251914] flex items-center justify-between">
+            <span>Estados (UF)</span>
+            <span class="material-symbols-outlined text-[#885031] text-base">map</span>
+          </a>
+          <a routerLink="/municipios" class="p-3.5 rounded-xl bg-white hover:bg-[#ffe9e2] border border-[#d2c3be]/40 font-bold text-[#251914] flex items-center justify-between">
+            <span>Municípios</span>
+            <span class="material-symbols-outlined text-[#885031] text-base">location_on</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

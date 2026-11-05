@@ -1,0 +1,80 @@
+<footer class="bg-[#130804] text-[#ffede7] border-t border-white/10 mt-auto">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+      <!-- Coluna 1: Identidade da Marca Dorana COFFEE SHOP -->
+      <div class="space-y-4">
+        <a routerLink="/" class="inline-flex flex-col">
+          <span class="font-headline text-3xl font-bold tracking-tight text-white">Dorana</span>
+          <span class="font-label text-[10px] uppercase tracking-[0.25em] text-[#fdb38d] -mt-1 font-semibold">
+            COFFEE SHOP
+          </span>
+        </a>
+        <p class="text-xs text-[#e2bfaf]/80 leading-relaxed">
+          Curadoria de microlotes especiais e torrefação artesanal sob demanda. Rastreabilidade completa da fazenda à sua xícara, respeitando produtores e terroirs brasileiros.
+        </p>
+        <div class="flex items-center gap-3 pt-1">
+          <span class="inline-flex items-center gap-1.5 text-[11px] bg-[#261912] text-[#fdb38d] px-3 py-1 rounded-full border border-white/10">
+            <span class="material-symbols-outlined text-sm">workspace_premium</span>
+            100% Arábica Especial (SCA 84+)
+          </span>
+        </div>
+      </div>
+
+      <!-- Coluna 2: Navegação & Curadoria -->
+      <div>
+        <h3 class="font-label text-xs uppercase tracking-[0.2em] text-[#fdb38d] font-bold mb-4">
+          Explorar Grãos
+        </h3>
+        <ul class="space-y-2.5 text-xs text-[#e2bfaf]/85">
+          <li><a routerLink="/catalogo" class="hover:text-white transition-colors">Catálogo Completo de Safra</a></li>
+          <li><a routerLink="/catalogo" [queryParams]="{ torra: 1 }" class="hover:text-white transition-colors">Torra Clara Sensorial</a></li>
+          <li><a routerLink="/catalogo" [queryParams]="{ torra: 2 }" class="hover:text-white transition-colors">Torra Média Equilibrada</a></li>
+          <li><a routerLink="/catalogo" [queryParams]="{ torra: 3 }" class="hover:text-white transition-colors">Torra Escura Intensa</a></li>
+          <li><a routerLink="/carrinho" class="hover:text-white transition-colors">Sacola de Compras</a></li>
+        </ul>
+      </div>
+
+      <!-- Coluna 3: Atendimento & Conta -->
+      <div>
+        <h3 class="font-label text-xs uppercase tracking-[0.2em] text-[#fdb38d] font-bold mb-4">
+          Área do Cliente
+        </h3>
+        <ul class="space-y-2.5 text-xs text-[#e2bfaf]/85">
+          <li><a routerLink="/minha-conta" class="hover:text-white transition-colors">Meus Pedidos &amp; Rastreio</a></li>
+          <li><a routerLink="/minha-conta" class="hover:text-white transition-colors">Endereços de Entrega</a></li>
+          <li><a routerLink="/login" class="hover:text-white transition-colors">Autenticação &amp; Cadastro</a></li>
+          <li><a routerLink="/admin" class="hover:text-white transition-colors">Portal Administrativo</a></li>
+        </ul>
+      </div>
+
+      <!-- Coluna 4: Torrefação & Segurança -->
+      <div class="space-y-4">
+        <h3 class="font-label text-xs uppercase tracking-[0.2em] text-[#fdb38d] font-bold mb-4">
+          Torrefação &amp; Atendimento
+        </h3>
+        <p class="text-xs text-[#e2bfaf]/80 leading-relaxed">
+          Torras semanais às segundas e quartas-feiras para garantir o ápice sensorial de degaseificação em cada pacote enviado.
+        </p>
+        <div class="bg-[#261912] p-4 rounded-xl border border-white/10 space-y-2 text-xs">
+          <div class="flex items-center gap-2 text-white font-medium">
+            <span class="material-symbols-outlined text-[#fdb38d] text-base">verified_user</span>
+            <span>Pagamento Seguro PIX, Cartão &amp; Boleto</span>
+          </div>
+          <div class="flex items-center gap-2 text-[#e2bfaf]/80">
+            <span class="material-symbols-outlined text-[#fdb38d] text-base">local_shipping</span>
+            <span>Frete Grátis acima de R$ 180,00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#e2bfaf]/60">
+      <p>© {{ currentYear }} <strong class="text-white">Dorana Coffee Shop</strong>. Todos os direitos reservados.</p>
+      <p class="flex items-center gap-2">
+        <span>Design System: Torrefação Nobre</span>
+        <span>•</span>
+        <span>Especialistas em Cafés de Origem</span>
+      </p>
+    </div>
+  </div>
+</footer>

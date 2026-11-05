@@ -1,17 +1,103 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR" class="scroll-smooth">
 <head>
   <meta charset="utf-8">
-  <title>Frontend</title>
+  <title>Dorana Coffee Shop | Cafés Especiais &amp; Torrefação Artesanal</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary-fixed-dim": "#e2bfaf",
+            "secondary-fixed": "#ffdbc9",
+            "surface-tint": "#73584b",
+            "surface-container-low": "#fff1ec",
+            "on-surface": "#251914",
+            "on-tertiary": "#ffffff",
+            "inverse-surface": "#3c2e28",
+            "on-secondary-fixed": "#331200",
+            "secondary": "#885031",
+            "on-error": "#ffffff",
+            "surface-variant": "#f5ded5",
+            "tertiary-fixed-dim": "#dfc0a5",
+            "error": "#ba1a1a",
+            "on-tertiary-container": "#997e66",
+            "surface-container-lowest": "#ffffff",
+            "tertiary-container": "#2a1807",
+            "background": "#fff8f6",
+            "secondary-fixed-dim": "#ffb691",
+            "outline-variant": "#d2c3be",
+            "on-primary-fixed": "#29170f",
+            "on-secondary-container": "#723e21",
+            "on-error-container": "#93000a",
+            "on-primary": "#ffffff",
+            "surface-container": "#ffe9e2",
+            "surface": "#fff8f6",
+            "on-tertiary-fixed": "#281807",
+            "outline": "#807570",
+            "on-surface-variant": "#4f4541",
+            "on-secondary-fixed-variant": "#6c391c",
+            "error-container": "#ffdad6",
+            "surface-dim": "#eccfc6",
+            "tertiary": "#130804",
+            "on-primary-container": "#96786a",
+            "surface-container-highest": "#f5ded5",
+            "surface-bright": "#fff8f6",
+            "primary-container": "#261912",
+            "primary-fixed": "#ffdbcb",
+            "tertiary-fixed": "#fcdcbf",
+            "on-tertiary-fixed-variant": "#57422e",
+            "inverse-primary": "#e2bfaf",
+            "on-background": "#251914",
+            "on-primary-fixed-variant": "#594135",
+            "secondary-container": "#fdb38d",
+            "surface-container-high": "#fbe3db",
+            "inverse-on-surface": "#ffede7",
+            "primary": "#130804"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            "headline": ["Playfair Display", "serif"],
+            "body": ["Plus Jakarta Sans", "sans-serif"],
+            "label": ["Plus Jakarta Sans", "sans-serif"]
+          },
+          fontSize: {
+            "display-lg": ["3.5rem", { lineHeight: "1.1", letterSpacing: "-0.02em" }],
+            "display-md": ["2.75rem", { lineHeight: "1.15", letterSpacing: "-0.015em" }],
+            "headline-lg": ["2rem", { lineHeight: "1.2" }],
+            "headline-md": ["1.75rem", { lineHeight: "1.25" }],
+            "headline-sm": ["1.5rem", { lineHeight: "1.3" }],
+            "title-lg": ["1.25rem", { lineHeight: "1.4" }],
+            "title-md": ["1.125rem", { lineHeight: "1.4" }],
+            "title-sm": ["1rem", { lineHeight: "1.4" }],
+            "body-lg": ["1rem", { lineHeight: "1.6" }],
+            "body-md": ["0.875rem", { lineHeight: "1.6" }],
+            "body-sm": ["0.75rem", { lineHeight: "1.5" }],
+            "label-lg": ["0.875rem", { lineHeight: "1.4" }],
+            "label-md": ["0.75rem", { lineHeight: "1.4", letterSpacing: "0.05em" }],
+            "label-sm": ["0.6875rem", { lineHeight: "1.4", letterSpacing: "0.08em" }]
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body>
+<body class="bg-surface text-on-surface font-body antialiased selection:bg-secondary-container selection:text-on-secondary-container">
   <app-root></app-root>
 </body>
 </html>

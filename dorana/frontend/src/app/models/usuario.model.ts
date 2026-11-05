@@ -9,7 +9,7 @@ export class Usuario {
   login!: string;
   cpf!: string;
   dataNascimento!: Date;
-  perfis!: Perfil[];
-  telefones!: Telefone[];
-  enderecos!: Endereco[];
+  perfis?: Perfil[];
+  telefones?: Telefone[];
+  enderecos?: Endereco[];
 }

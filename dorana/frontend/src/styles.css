@@ -1,1 +1,61 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --bg-surface: #fff8f6;
+  --bg-surface-lowest: #ffffff;
+  --bg-surface-low: #fff1ec;
+  --bg-surface-container: #ffe9e2;
+  --bg-surface-high: #fbe3db;
+  --bg-surface-highest: #f5ded5;
+  --color-primary: #130804;
+  --color-primary-container: #261912;
+  --color-secondary: #885031;
+  --color-secondary-container: #fdb38d;
+  --color-on-surface: #251914;
+  --color-on-surface-variant: #4f4541;
+  --color-outline: #807570;
+  --color-outline-variant: #d2c3be;
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background-color: var(--bg-surface);
+  color: var(--color-on-surface);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
+
+.material-symbols-filled {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.editorial-shadow {
+  box-shadow: 0 20px 40px -12px rgba(37, 25, 20, 0.08);
+}
+
+.ambient-shadow {
+  box-shadow: 0 20px 40px -12px rgba(37, 25, 20, 0.06);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #fff1ec;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #d2c3be;
+  border-radius: 3px;
+}

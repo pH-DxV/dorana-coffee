@@ -1,0 +1,263 @@
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+  <!-- Cabeçalho Controle de Estoque e Concorrência (Stitch Screen 10) -->
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#d2c3be]/40 pb-6">
+    <div>
+      <span class="text-xs font-label uppercase tracking-[0.2em] text-[#885031] font-bold">
+        Logística &amp; Armazém de Torra
+      </span>
+      <h1 class="font-headline text-3xl sm:text-4xl font-bold text-[#251914] mt-1">
+        Controle de Estoque de Microlotes
+      </h1>
+      <p class="text-xs text-[#4f4541] mt-1">
+        Gerencie entradas de torra, baixas de inventário e alertas de reposição integrados ao banco Quarkus.
+      </p>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <button
+        type="button"
+        (click)="carregarEstoque()"
+        class="px-4 py-2.5 rounded-xl border border-[#d2c3be] bg-white hover:bg-[#fff1ec] text-xs font-bold text-[#251914] flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-base">sync</span>
+        <span>Sincronizar Saldos</span>
+      </button>
+      <a
+        routerLink="/cafes/new"
+        class="px-4 py-2.5 rounded-xl bg-[#885031] hover:bg-[#723e21] text-white text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-base">add</span>
+        <span>Novo Café</span>
+      </a>
+    </div>
+  </div>
+
+  @if (feedbackMsg(); as ok) {
+    <div class="p-4 rounded-xl bg-emerald-100 text-emerald-900 border border-emerald-500/30 flex items-center gap-2 text-xs font-semibold">
+      <span class="material-symbols-outlined text-base">check_circle</span>
+      <span>{{ ok }}</span>
+    </div>
+  }
+  @if (erroMsg(); as err) {
+    <div class="p-4 rounded-xl bg-[#ffdad6] text-[#93000a] border border-[#ba1a1a]/30 flex items-center gap-2 text-xs font-semibold">
+      <span class="material-symbols-outlined text-base">error</span>
+      <span>{{ err }}</span>
+    </div>
+  }
+
+  <!-- 4 Cards de KPI de Armazém -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="bg-white p-6 rounded-2xl border border-[#d2c3be]/40 editorial-shadow space-y-1.5">
+      <span class="text-[11px] uppercase tracking-wider text-[#807570] font-bold">Volume Físico Total</span>
+      <p class="text-2xl font-bold text-[#251914] tabular-nums">{{ totalPacotes() }} pacotes</p>
+      <span class="text-[11px] text-[#4f4541] block">Prontos para expedição</span>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl border border-[#d2c3be]/40 editorial-shadow space-y-1.5">
+      <span class="text-[11px] uppercase tracking-wider text-[#807570] font-bold">Valor em Estoque</span>
+      <p class="text-2xl font-bold text-[#251914] tabular-nums">R$ {{ valorPatrimonial() | number:'1.2-2' }}</p>
+      <span class="text-[11px] text-[#885031] font-semibold block">Cálculo pelo preço de venda</span>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl border border-[#d2c3be]/40 editorial-shadow space-y-1.5">
+      <span class="text-[11px] uppercase tracking-wider text-[#807570] font-bold">Estoque Crítico (≤ 5 un.)</span>
+      <p class="text-2xl font-bold text-amber-700 tabular-nums">{{ qtdEstoqueCritico() }} lotes</p>
+      <span class="text-[11px] text-[#4f4541] block">Programar nova torra</span>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl border border-[#d2c3be]/40 editorial-shadow space-y-1.5">
+      <span class="text-[11px] uppercase tracking-wider text-[#807570] font-bold">Lotes Esgotados</span>
+      <p class="text-2xl font-bold text-[#ba1a1a] tabular-nums">{{ qtdEsgotados() }} lotes</p>
+      <span class="text-[11px] text-[#ba1a1a] font-semibold block">Indisponíveis na vitrine</span>
+    </div>
+  </div>
+
+  <!-- Barra de Filtros e Busca -->
+  <div class="bg-white p-4 rounded-2xl border border-[#d2c3be]/40 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+    <div class="flex flex-wrap gap-2 text-xs">
+      @for (tab of [
+        { id: 'TODOS', label: 'Todos os Lotes' },
+        { id: 'SAUDAVEL', label: 'Estoque Saudável (> 5)' },
+        { id: 'CRITICO', label: 'Estoque Baixo (1–5)' },
+        { id: 'ESGOTADO', label: 'Esgotados (0)' }
+      ]; track tab.id) {
+        <button
+          type="button"
+          (click)="filtroStatus.set($any(tab.id))"
+          [class]="filtroStatus() === tab.id
+            ? 'px-3.5 py-2 rounded-xl bg-[#130804] text-[#fdb38d] font-bold'
+            : 'px-3.5 py-2 rounded-xl bg-[#fff8f6] text-[#251914] hover:bg-[#ffe9e2] font-medium'">
+          {{ tab.label }}
+        </button>
+      }
+    </div>
+
+    <div class="relative min-w-[260px]">
+      <span class="material-symbols-outlined text-[#807570] text-base absolute left-3 top-2.5">search</span>
+      <input
+        type="text"
+        [ngModel]="termoBusca()"
+        (ngModelChange)="termoBusca.set($event)"
+        placeholder="Filtrar por café, marca ou categoria..."
+        class="w-full bg-[#fff8f6] text-xs text-[#251914] rounded-xl pl-9 pr-3 py-2 border border-[#d2c3be]"
+      />
+    </div>
+  </div>
+
+  <!-- Tabela de Controle de Estoque -->
+  <div class="bg-white rounded-2xl border border-[#d2c3be]/40 editorial-shadow overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead class="bg-[#fff1ec] text-[#4f4541] uppercase tracking-wider text-[10px]">
+          <tr>
+            <th class="py-4 px-5">SKU / Lote</th>
+            <th class="py-4 px-5">Microlote &amp; Torrefação</th>
+            <th class="py-4 px-5">Torra / Peso</th>
+            <th class="py-4 px-5">Preço Unit.</th>
+            <th class="py-4 px-5">Saldo Atual</th>
+            <th class="py-4 px-5">Status</th>
+            <th class="py-4 px-5 text-right">Operações de Estoque</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#d2c3be]/30">
+          @for (c of cafesFiltrados(); track c.id; let idx = $index) {
+            <tr class="hover:bg-[#fff8f6]">
+              <td class="py-4 px-5 font-mono font-bold text-[#807570] tabular-nums">#LOTE-{{ c.id }}</td>
+              <td class="py-4 px-5">
+                <div class="flex items-center gap-3">
+                  <img
+                    [src]="obterImagem(c, idx)"
+                    [alt]="c.nome"
+                    class="w-10 h-10 rounded-lg object-cover shrink-0 bg-[#fff1ec]"
+                  />
+                  <div>
+                    <p class="font-bold text-[#251914] text-sm">{{ c.nome }}</p>
+                    <p class="text-[11px] text-[#807570]">{{ c.marca?.nome }} • {{ c.categoriaDoCafe?.nome }}</p>
+                  </div>
+                </div>
+              </td>
+              <td class="py-4 px-5 text-[#4f4541]">
+                {{ c.nivelDeTorra?.nome || 'Média' }} • {{ c.peso || 250 }}g
+              </td>
+              <td class="py-4 px-5 font-bold text-[#251914] tabular-nums">
+                R$ {{ (c.preco || 0) | number:'1.2-2' }}
+              </td>
+              <td class="py-4 px-5">
+                <span class="text-base font-bold text-[#251914] tabular-nums">{{ c.estoque ?? 0 }} un.</span>
+              </td>
+              <td class="py-4 px-5">
+                @if ((c.estoque ?? 0) <= 0) {
+                  <span class="px-2.5 py-1 rounded-full bg-[#ba1a1a] text-white text-[10px] font-bold uppercase">
+                    Esgotado
+                  </span>
+                } @else if ((c.estoque ?? 0) <= 5) {
+                  <span class="px-2.5 py-1 rounded-full bg-[#ffdad6] text-[#93000a] text-[10px] font-bold uppercase">
+                    Estoque Baixo
+                  </span>
+                } @else {
+                  <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold uppercase">
+                    Disponível
+                  </span>
+                }
+              </td>
+              <td class="py-4 px-5 text-right">
+                <div class="inline-flex items-center gap-2">
+                  <button
+                    type="button"
+                    (click)="abrirModalMovimentacao(c, 'ENTRADA')"
+                    class="px-3 py-1.5 rounded-lg bg-[#885031] hover:bg-[#723e21] text-white font-bold text-[11px] flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">add_box</span>
+                    <span>Ajustar Saldo</span>
+                  </button>
+                  <a
+                    [routerLink]="['/cafes/edit', c.id]"
+                    class="p-1.5 rounded-lg border border-[#d2c3be] text-[#251914] hover:bg-[#fff1ec]"
+                    title="Editar Ficha Completa">
+                    <span class="material-symbols-outlined text-sm">edit</span>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Modal de Movimentação de Estoque (PUT /cafes/:id) -->
+@if (cafeSelecionadoModal(); as cafe) {
+  <div class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-[#fff8f6] rounded-2xl max-w-md w-full p-6 border border-[#d2c3be] shadow-2xl space-y-5">
+      <div class="flex items-start justify-between border-b border-[#d2c3be]/40 pb-4">
+        <div>
+          <span class="text-[10px] uppercase tracking-widest text-[#885031] font-bold">Movimentação de Lote</span>
+          <h3 class="font-headline text-xl font-bold text-[#251914]">{{ cafe.nome }}</h3>
+          <p class="text-xs text-[#4f4541]">Saldo atual: <strong class="tabular-nums">{{ cafe.estoque ?? 0 }} unidades</strong></p>
+        </div>
+        <button type="button" (click)="fecharModalMovimentacao()" class="text-[#807570] hover:text-[#251914]">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-3 gap-2 text-xs">
+        <button
+          type="button"
+          (click)="tipoMovimentacao.set('ENTRADA')"
+          [class]="tipoMovimentacao() === 'ENTRADA'
+            ? 'py-2.5 rounded-xl bg-emerald-700 text-white font-bold'
+            : 'py-2.5 rounded-xl bg-white border border-[#d2c3be] text-[#251914]'">
+          + Entrada
+        </button>
+        <button
+          type="button"
+          (click)="tipoMovimentacao.set('SAIDA')"
+          [class]="tipoMovimentacao() === 'SAIDA'
+            ? 'py-2.5 rounded-xl bg-[#ba1a1a] text-white font-bold'
+            : 'py-2.5 rounded-xl bg-white border border-[#d2c3be] text-[#251914]'">
+          - Baixa
+        </button>
+        <button
+          type="button"
+          (click)="tipoMovimentacao.set('DEFINIR')"
+          [class]="tipoMovimentacao() === 'DEFINIR'
+            ? 'py-2.5 rounded-xl bg-[#130804] text-[#fdb38d] font-bold'
+            : 'py-2.5 rounded-xl bg-white border border-[#d2c3be] text-[#251914]'">
+          = Saldo Fixo
+        </button>
+      </div>
+
+      <div class="space-y-2 text-xs">
+        <label class="block font-bold text-[#251914]">
+          Quantidade de Pacotes ({{ cafe.peso || 250 }}g):
+        </label>
+        <input
+          type="number"
+          min="0"
+          [ngModel]="quantidadeMovimentacao()"
+          (ngModelChange)="quantidadeMovimentacao.set($event)"
+          class="w-full bg-white rounded-xl px-4 py-3 text-base font-bold text-[#251914] border border-[#d2c3be] tabular-nums"
+        />
+      </div>
+
+      <div class="bg-[#fff1ec] p-4 rounded-xl border border-[#d2c3be]/50 flex items-center justify-between text-xs">
+        <span class="font-medium text-[#4f4541]">Novo Saldo Após Confirmação:</span>
+        <span class="text-lg font-bold text-[#885031] tabular-nums">{{ calcularNovoSaldoPreview() }} un.</span>
+      </div>
+
+      <div class="flex justify-end gap-3 pt-2">
+        <button
+          type="button"
+          (click)="fecharModalMovimentacao()"
+          class="px-4 py-2.5 rounded-xl border border-[#d2c3be] text-xs font-bold text-[#251914]">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          (click)="confirmarMovimentacao()"
+          [disabled]="salvandoMovimentacao()"
+          class="px-5 py-2.5 rounded-xl bg-[#885031] hover:bg-[#723e21] text-white text-xs font-bold uppercase tracking-wider">
+          {{ salvandoMovimentacao() ? 'Salvando...' : 'Confirmar Atualização' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

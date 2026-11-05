@@ -7,5 +7,5 @@ export class Endereco {
   numero!: string;
   complemento!: string;
   bairro!: string;
-  municipio!: Municipio;
+  municipio?: Municipio;
 }

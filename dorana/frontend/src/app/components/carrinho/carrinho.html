@@ -1,0 +1,254 @@
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
+  <!-- Cabeçalho Editorial -->
+  <div class="mb-8">
+    <nav class="text-xs text-[#807570] mb-2 flex items-center gap-2">
+      <a routerLink="/" class="hover:text-[#885031]">Início</a>
+      <span>/</span>
+      <a routerLink="/catalogo" class="hover:text-[#885031]">Catálogo</a>
+      <span>/</span>
+      <span class="text-[#251914] font-semibold">Sacola de Compras</span>
+    </nav>
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <span class="text-xs font-label uppercase tracking-[0.2em] text-[#885031] font-bold">
+          Sua Seleção Sensorial
+        </span>
+        <h1 class="font-headline text-3xl sm:text-4xl font-bold text-[#251914] mt-1">
+          Sacola de Compras
+        </h1>
+      </div>
+      <span class="text-xs font-semibold text-[#4f4541] tabular-nums">
+        {{ cartService.totalCount() }} {{ cartService.totalCount() === 1 ? 'pacote selecionado' : 'pacotes selecionados' }}
+      </span>
+    </div>
+  </div>
+
+  @if (cartService.items().length === 0) {
+    <!-- Estado de Sacola Vazia -->
+    <div class="bg-white rounded-2xl p-12 sm:p-16 text-center border border-[#d2c3be]/40 editorial-shadow max-w-2xl mx-auto space-y-5">
+      <div class="w-16 h-16 rounded-2xl bg-[#fff1ec] text-[#885031] flex items-center justify-center mx-auto">
+        <span class="material-symbols-outlined text-3xl">shopping_bag</span>
+      </div>
+      <h2 class="font-headline text-2xl font-bold text-[#251914]">
+        Sua sacola está vazia no momento
+      </h2>
+      <p class="text-xs sm:text-sm text-[#4f4541] max-w-md mx-auto leading-relaxed">
+        Explore nossa curadoria de cafés especiais 100% Arábica, escolha sua moagem preferida e receba grãos recém-torrados em casa.
+      </p>
+      <div class="pt-2">
+        <a
+          routerLink="/catalogo"
+          class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-[#885031] hover:bg-[#723e21] text-white text-xs font-bold uppercase tracking-wider shadow-md transition-all">
+          <span>Explorar Catálogo de Grãos</span>
+          <span class="material-symbols-outlined text-base">arrow_forward</span>
+        </a>
+      </div>
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <!-- Coluna Esquerda (8 cols): Barra de Frete Grátis + Lista de Itens -->
+      <div class="lg:col-span-8 space-y-6">
+        <!-- Barra de Progresso de Frete Grátis -->
+        <div class="bg-[#fff1ec] p-5 rounded-xl border border-[#d2c3be]/50 space-y-2.5">
+          <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2 font-semibold text-[#251914]">
+              <span class="material-symbols-outlined text-[#885031] text-lg">local_shipping</span>
+              @if (cartService.faltaParaFreteGratis() === 0) {
+                <span class="text-emerald-800 font-bold">
+                  Parabéns! Você conquistou Frete Grátis para este pedido!
+                </span>
+              } @else {
+                <span>
+                  Faltam <strong class="text-[#885031] tabular-nums">R$ {{ cartService.faltaParaFreteGratis() | number:'1.2-2' }}</strong> para ganhar <strong>Frete Grátis</strong>
+                </span>
+              }
+            </div>
+            <span class="font-bold text-[#885031] tabular-nums">{{ cartService.progressoFreteGratis() }}%</span>
+          </div>
+          <div class="w-full h-2 bg-[#f5ded5] rounded-full overflow-hidden">
+            <div
+              class="h-full bg-[#885031] rounded-full transition-all duration-500"
+              [style.width.%]="cartService.progressoFreteGratis()"></div>
+          </div>
+        </div>
+
+        <!-- Lista de Itens no Carrinho -->
+        <div class="space-y-4">
+          @for (item of cartService.items(); track item.cafe.id + '-' + item.moagem; let idx = $index) {
+            <article
+              class="bg-white p-5 rounded-xl border border-[#d2c3be]/40 editorial-shadow flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+              <div class="flex items-center gap-4 flex-1 min-w-0">
+                <a [routerLink]="['/produto', item.cafe.id]" class="w-24 h-24 rounded-xl overflow-hidden bg-[#fff1ec] shrink-0 border border-[#d2c3be]/30">
+                  <img
+                    [src]="obterImagem(item.cafe, idx)"
+                    [alt]="item.cafe.nome"
+                    class="w-full h-full object-cover"
+                  />
+                </a>
+
+                <div class="space-y-1.5 min-w-0 flex-1">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-[#885031]">
+                      {{ item.cafe.marca?.nome || 'Dorana' }} • {{ item.cafe.peso || 250 }}g
+                    </span>
+                    @if (item.cafe.pontuacaoSCA) {
+                      <span class="px-2 py-0.5 rounded bg-[#130804] text-[#fdb38d] text-[10px] font-bold tabular-nums">
+                        SCA {{ item.cafe.pontuacaoSCA }}
+                      </span>
+                    }
+                  </div>
+
+                  <a [routerLink]="['/produto', item.cafe.id]" class="block">
+                    <h3 class="font-headline text-lg font-bold text-[#251914] hover:text-[#885031] truncate">
+                      {{ item.cafe.nome }}
+                    </h3>
+                  </a>
+
+                  <!-- Badge de Moagem Escolhida -->
+                  <div class="flex flex-wrap items-center gap-2 pt-0.5">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-[#ffe9e2] text-[#723e21] text-[11px] font-semibold">
+                      <span class="material-symbols-outlined text-xs">coffee_maker</span>
+                      {{ item.moagemLabel }}
+                    </span>
+                    <span class="text-xs text-[#807570] tabular-nums">
+                      Unitário: R$ {{ (item.cafe.preco || 0) | number:'1.2-2' }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Controles de Quantidade, Subtotal e Remoção -->
+              <div class="flex items-center justify-between sm:justify-end gap-5 w-full sm:w-auto pt-3 sm:pt-0 border-t sm:border-t-0 border-[#d2c3be]/30">
+                <div class="flex items-center border border-[#d2c3be] rounded-lg bg-[#fff8f6]">
+                  <button
+                    type="button"
+                    (click)="cartService.updateQuantity(item.cafe.id, item.moagem, item.quantidade - 1)"
+                    class="w-8 h-8 flex items-center justify-center text-[#251914] hover:bg-[#ffe9e2] font-bold rounded-l-lg">
+                    -
+                  </button>
+                  <span class="px-3 text-xs font-bold text-[#251914] tabular-nums">{{ item.quantidade }}</span>
+                  <button
+                    type="button"
+                    (click)="cartService.updateQuantity(item.cafe.id, item.moagem, item.quantidade + 1)"
+                    class="w-8 h-8 flex items-center justify-center text-[#251914] hover:bg-[#ffe9e2] font-bold rounded-r-lg">
+                    +
+                  </button>
+                </div>
+
+                <div class="text-right min-w-[95px]">
+                  <span class="text-[10px] uppercase tracking-wider text-[#807570] block">Subtotal</span>
+                  <span class="text-base font-bold text-[#251914] tabular-nums">
+                    R$ {{ ((item.cafe.preco || 0) * item.quantidade) | number:'1.2-2' }}
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  (click)="cartService.removeItem(item.cafe.id, item.moagem)"
+                  title="Remover item"
+                  class="p-2 rounded-lg text-[#807570] hover:text-[#ba1a1a] hover:bg-[#ffdad6]/40 transition-colors">
+                  <span class="material-symbols-outlined text-lg">delete</span>
+                </button>
+              </div>
+            </article>
+          }
+        </div>
+
+        <!-- Rodapé da Lista -->
+        <div class="flex flex-wrap items-center justify-between gap-4 pt-2">
+          <a
+            routerLink="/catalogo"
+            class="inline-flex items-center gap-2 text-xs font-bold text-[#885031] hover:text-[#130804]">
+            <span class="material-symbols-outlined text-base">arrow_back</span>
+            <span>Continuar Explorando o Catálogo</span>
+          </a>
+
+          <button
+            type="button"
+            (click)="cartService.clear()"
+            class="text-xs font-semibold text-[#807570] hover:text-[#ba1a1a] flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">remove_shopping_cart</span>
+            <span>Esvaziar Sacola</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Coluna Direita (4 cols): Resumo do Pedido & Simulador de CEP -->
+      <aside class="lg:col-span-4 bg-white p-6 rounded-2xl border border-[#d2c3be]/40 editorial-shadow space-y-6 sticky top-28">
+        <h2 class="font-headline text-xl font-bold text-[#251914] border-b border-[#d2c3be]/30 pb-3">
+          Resumo do Pedido
+        </h2>
+
+        <!-- Simulador de Frete por CEP -->
+        <div class="space-y-2">
+          <label class="block text-xs font-bold uppercase tracking-wider text-[#4f4541]">
+            Simular Entrega (CEP)
+          </label>
+          <div class="flex gap-2">
+            <input
+              type="text"
+              [(ngModel)]="cepSimulacao"
+              placeholder="00000-000"
+              maxlength="9"
+              class="flex-1 bg-[#fff8f6] text-xs text-[#251914] rounded-lg px-3 py-2 border border-[#d2c3be] focus:outline-none focus:border-[#885031]"
+            />
+            <button
+              type="button"
+              (click)="simularFrete()"
+              class="px-3.5 py-2 rounded-lg bg-[#261912] text-[#fdb38d] text-xs font-bold hover:bg-[#130804]">
+              Calcular
+            </button>
+          </div>
+          @if (prazoSimulado(); as msg) {
+            <p class="text-[11px] text-[#885031] font-medium pt-1">{{ msg }}</p>
+          }
+        </div>
+
+        <!-- Valores -->
+        <div class="space-y-3 text-xs border-t border-[#d2c3be]/30 pt-4">
+          <div class="flex justify-between text-[#4f4541]">
+            <span>Subtotal dos Grãos ({{ cartService.totalCount() }} un.)</span>
+            <span class="font-semibold text-[#251914] tabular-nums">
+              R$ {{ cartService.subtotal() | number:'1.2-2' }}
+            </span>
+          </div>
+
+          <div class="flex justify-between text-[#4f4541]">
+            <span>Frete Estimado</span>
+            @if (cartService.frete() === 0) {
+              <span class="font-bold text-emerald-700">Grátis</span>
+            } @else {
+              <span class="font-semibold text-[#251914] tabular-nums">
+                R$ {{ cartService.frete() | number:'1.2-2' }}
+              </span>
+            }
+          </div>
+
+          <div class="border-t border-[#d2c3be]/40 pt-3 flex items-baseline justify-between">
+            <span class="text-sm font-bold text-[#251914]">Total do Pedido</span>
+            <div class="text-right">
+              <span class="text-2xl font-bold text-[#251914] tabular-nums block">
+                R$ {{ cartService.total() | number:'1.2-2' }}
+              </span>
+              <span class="text-[11px] text-[#885031] font-medium">
+                Aceitamos PIX, Cartão de Crédito e Boleto
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <a
+          routerLink="/checkout"
+          class="w-full py-4 px-6 rounded-xl bg-[#885031] hover:bg-[#723e21] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-all">
+          <span>Finalizar Compra</span>
+          <span class="material-symbols-outlined text-base">lock</span>
+        </a>
+
+        <div class="bg-[#fff1ec] p-3.5 rounded-xl border border-[#d2c3be]/30 flex items-center gap-3 text-[11px] text-[#4f4541]">
+          <span class="material-symbols-outlined text-[#885031] text-xl">verified_user</span>
+          <span>Torra garantida após confirmação do pedido e rastreio completo em Minha Conta.</span>
+        </div>
+      </aside>
+    </div>
+  }
+</section>
